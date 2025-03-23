@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laatikon korkeuden laskeminen</title>
+</head>
+<body>
+    <h1>Laatikon korkeuden laskeminen yhtälöllä h = V / A, jossa V laatikon tilavuus ja A laatikon pohjan pinta-ala</h1>
+
+    <p>Tilavuus (m3):</p>
+    <input id="tilavuus" type="text" style="display: inline-block;">
+    <p  id="tilavuus_virhe" style="display: inline-block; padding: 0; margin: 0; color: red; font-weight: bold;"></p>
+
+    <p>Pohjan pinta-ala (m2):</p>
+    <input id="pinta-ala" type="text">
+    <p id="pinta_ala_virhe" style="display: inline-block; padding: 0; margin: 0; color: red; font-weight: bold;"></p>
+
+    <br>
+    <br>
+    <input type="button" value="Laske korkeus" onclick="TarkistaKentat()">
+    <input type="button" value="Tyhjennä" onclick="Tyhjenna()">
+    <p>Laatikon korkeus (m):</p>
+    <input id="korkeus" type="text">
+    <p id="korkeus_virhe" style="display: inline-block; padding: 0; margin: 0; color: red; font-weight: bold;"></p>
+    <p id="tulos"></p>
+
+    <script>
+        const Tyhjenna = () => {
+            // Tyhjennetään syöte kentät
+            document.getElementById("tilavuus").value = "";
+            document.getElementById("pinta-ala").value = "";
+            document.getElementById("korkeus").value = "";
+            TyhjennaVirheet();
+        }
+        const TyhjennaVirheet = () => {
+            // Tyhjennetään virheilmoitukset
+            document.getElementById("tilavuus_virhe").innerHTML = "";
+            document.getElementById("pinta_ala_virhe").innerHTML = "";
+            document.getElementById("korkeus_virhe").innerHTML = "";
+
+        }
+        const TarkistaKentat = () => {
+            const tilavuus = parseFloat(document.getElementById("tilavuus").value);
+            const pinta_ala = parseFloat(document.getElementById("pinta-ala").value);
+
+            // Tarkistetaan onko tilavuus ja pinta-ala numeroita
+            if (isNaN(tilavuus) || isNaN(pinta_ala)) {
+                document.getElementById("tilavuus_virhe").innerHTML = isNaN(tilavuus) ? "Ei ole numero!" : "";
+                document.getElementById("pinta_ala_virhe").innerHTML = isNaN(pinta_ala) ? "Ei ole numero!" : "";
+                return;
+            }
+            // Tarkistetaan onko tilavuus ja pinta-ala positiivisia lukuja
+            if (tilavuus <= 0 || pinta_ala <= 0) {
+                document.getElementById("tilavuus_virhe").innerHTML = tilavuus <= 0 ? "Tilavuus on 0 tai negatiivinen luku" : "";
+                document.getElementById("pinta_ala_virhe").innerHTML = pinta_ala <= 0 ? "Pinta-ala on 0 tai negatiivinen luku" : "";
+                return;
+            }
+            let korkeus = LaskeKorkeus(tilavuus, pinta_ala);
+            // Tarkistetaan onko korkeus laskettu nollalla
+            if (!Number.isFinite(korkeus)) {
+                document.getElementById("korkeus_virhe").innerHTML = "Tapahtui nollalla jako. Laskutoimitusta ei saa tehtyä.";
+                return;
+            }
+            // Näytetään käyttäjälle tulos
+            document.getElementById("korkeus").value = korkeus;
+            document.getElementById("tulos").innerHTML = `Tulos on <b>${korkeus} metriä</b>.`;
+            // Tyhjennetään virheilmoitukset jos korkeuden laskeminen onnistui
+            TyhjennaVirheet();
+        }
+        const LaskeKorkeus = (tilavuus, pinta_ala) => {
+            let korkeus = tilavuus / pinta_ala;
+            // Pyöristetään korkeus
+            korkeus = Math.round(korkeus * 100) / 100;
+            return korkeus
+        }
+    </script>
+</body>
+</html>

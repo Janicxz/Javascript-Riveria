@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Popup-ikkunat</title>
+</head>
+<body>
+    <h1>Ympyrän pinta-alan laskeminen</h1>
+    <button onclick="Laskepinta()">Laske ympyrän pinta-ala</button>
+    <p id="virhe"></p>
+    <script>
+        const PopupEstetty = () => {
+            let ikkuna = window.open(null, "", "width=100, height=100");
+            try {
+                ikkuna.close();
+                return false;
+            } catch (err) {
+                console.log("Popup estetty");
+                return true;
+            }
+        }
+    
+        const Laskepinta = () => {
+            // Onko ponnahdusikkunat estetty?
+            const popup_estetty = PopupEstetty();
+    
+            // Hae elementti id:llä virhe
+            const virhe_elem =  document.getElementById("virhe");
+    
+    
+            // Virhe elementtiä ei löytynyt
+            if (virhe_elem === null) {
+                console.error("Elementtiä virhe ei löytynyt");
+                return;
+            }
+            // Tyhjennetään edellinen virheilmoitus.
+            virhe_elem.innerHTML = "";
+    
+            // Ponnahdusikkunat on estetty
+            if (popup_estetty) {
+                console.error("Ponnahdusikkunat on estetty")
+                virhe_elem.innerHTML = "Ponnahdusikkunat on estetty.";
+                return;
+            }
+    
+            const sade = window.prompt("Anna säde:");
+            // Syötettä ei annettu
+            if (sade === null || sade === "") {
+                console.error("Käyttäjä ei antanut sädettä");
+                virhe_elem.innerHTML = "Syöte on tyhjä!";
+                return;
+            }
+            // Syöte ei ole numero
+            if(isNaN(sade)) {
+                console.error("Syöte ei ole numeerisessa muodossa!");
+                virhe_elem.innerHTML = "Syöte ei ole numeerisessa muodossa!";
+                return;
+            }
+            // Syöte on pienempi kuin 1
+            if (sade < 1) {
+                console.error("Annettu luku on pienempi kuin 1. Annathan positiivisen luvun.");
+                virhe_elem.innerHTML = "Annettu luku on pienempi kuin 1. <br/>Annathan vain positiivisia numeroita.";
+				return;
+            }
+    
+            // Lasketaan ympyrän pinta-ala
+            pinta_ala = 3.14 * sade * sade;
+            console.log(`pinta_ala: ${pinta_ala}, säde: ${sade}`);
+            window.alert(`Ympyrän laskettu pinta-ala on ${pinta_ala}, kun säde on ${sade}`);
+        }
+    </script>
+</body>
+</html>

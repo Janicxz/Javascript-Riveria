@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kahden luvun laskeminen, virheen etsiminen debugtyökaluilla</title>
+    <style>
+        
+.divTable{
+	display: table;
+	width: 100%;
+}
+.divTableRow {
+	display: table-row;
+}
+.divTableHeading {
+	background-color: #EEE;
+	display: table-header-group;
+}
+.divTableCell, .divTableHead {
+	border: 0px solid #999999;
+	display: table-cell;
+	padding: 3px 10px;
+}
+.divTableHeading {
+	background-color: #EEE;
+	display: table-header-group;
+	font-weight: bold;
+}
+.divTableFoot {
+	background-color: #EEE;
+	display: table-footer-group;
+	font-weight: bold;
+}
+.divTableBody {
+	display: table-row-group;
+}
+    </style>
+    <script>
+        const Laskeluvutyhteen=()=> {
+            let summa=0;
+
+            let lukua = parseFloat(document.getElementById('txtlukua').value);
+            let lukub = parseFloat(document.getElementById('txtlukub').value);
+
+            if (isNaN(lukua) || isNaN(lukub)) {
+                return;
+            }
+            summa = lukua + lukub;
+
+            document.getElementById('txttulos').value=summa;
+            
+        }
+    </script>
+    
+</head>
+<body>
+<h1>Javascript koodin debuggaus</h1>
+<p>Anna a:lle ja b:lle lukuarvot ja laske ne yhteen klikkaamalla 
+Laske-painiketta. Etsi virhe Chromen Dev Tools ja Debug-työkaluja 
+hyödyntäen ja korjaa koodi toimivaksi.</p>
+<div class="divTable">
+    <div class="divTableBody">
+    <div class="divTableRow">
+    <div class="divTableCell">&nbsp;Anna luku a:</div>
+    <div class="divTableCell"><input type="text" id="txtlukua" name="txtlukua"></div>
+    </div>
+    <div class="divTableRow">
+    <div class="divTableCell">&nbsp;Anna luku b:</div>
+    <div class="divTableCell"><input type="text" id="txtlukub" name="txtlukub"></div>
+    </div>
+    <div class="divTableRow">
+    <div class="divTableCell">&nbsp;</div>
+    <div class="divTableCell"><input type="button" id="Laske" name="Laske" value="Laske" onclick="Laskeluvutyhteen()"></div>
+    </div>
+    <div class="divTableRow">
+    <div class="divTableCell">&nbsp;</div>
+    <div class="divTableCell"><input type="text" id="txttulos" name="txttulos"></div>
+    </div>
+    </div>
+    </div>
+    
+
+
+</body></html>

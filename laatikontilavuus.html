@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laatikon tilavuuden laskuri</title>
+    
+    <style>
+        hr {
+            border-color: rgba(53, 53, 53, 0.26);
+        }
+
+        main {
+            display: flex; justify-content: center;
+        }
+        header {
+            text-align: center;
+        }
+        .taulukko {
+            float: left;
+        }
+        footer {
+            
+            text-align: center;
+        }
+        .sisalto {
+            display: inline-flex;
+            border-radius: 10px;
+            box-shadow: 5px 5px 5px rgba(146, 146, 146, 0.384);
+            margin: 20px; padding: 20px; border: 1px solid rgba(100, 100, 100, 0.384);
+        }
+        #virhe {
+            margin-left: 10px; color: red; font-weight: bold;
+        }
+        @media screen and (max-width: 800px) {
+            .taulukko{
+                float: none;
+            }
+            .sisalto {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Laatikon tilavuuden laskentalomake CSS-asetteluilla asemoituna</h1>
+        <hr>
+    </header>
+    <main>
+        <div class="sisalto">
+            <table class="taulukko" style="width: 288px;">
+                <tbody>
+                <tr style="height: 21px;">
+                <td style="width: 138.783px; height: 21px;"><label for="leveys">Leveys (m):</label></td>
+                <td style="width: 142.217px; height: 21px;"><input id="leveys" type="text"></td>
+                </tr>
+                <tr style="height: 21px;">
+                <td style="width: 138.783px; height: 21px;"><label for="korkeus">Korkeus (m):</label></td>
+                <td style="width: 142.217px; height: 21px;"><input id="korkeus" type="text"></td>
+                </tr>
+                <tr style="height: 21px;">
+                <td style="width: 138.783px; height: 21px;"><label for="syvyys">Syvyys (m):</label></td>
+                <td style="width: 142.217px; height: 21px;"><input id="syvyys" type="text"></td>
+                </tr>
+                <tr style="height: 39px;">
+                <td style="width: 138.783px; height: 39px;"></td>
+                <td style="width: 142.217px; height: 39px;"><input style="margin-right: 20px;" type="button" onclick="Tarkistakentat()" value="Laske"><input type="button" onclick="Tyhjenna()" value="Tyhjennä"></td>
+                </tr>
+                <tr style="height: 21px;">
+                <td style="width: 138.783px; height: 21px;"><label for="tilavuus">Tilavuus (m³):</label></td>
+                <td style="width: 142.217px; height: 21px;"><input id="tilavuus" type="text"></td>
+                </tr>
+                </tbody>
+                </table>
+            <p id="virhe"></p>
+        </div>
+    </main>
+    <footer>
+        <p>Jani Luostarinen 2025</p>
+    </footer>
+    <script>
+        const Tyhjenna = () => {
+            document.getElementById("leveys").value = "";
+            document.getElementById("korkeus").value = "";
+            document.getElementById("syvyys").value = "";
+            document.getElementById("tilavuus").value = "";
+
+            Tyhjennavirheet();
+        }
+        const Tyhjennavirheet = () => {
+            document.getElementById("virhe").innerHTML = "";
+        }
+        const Tarkistakentat = () => {
+            const leveys = parseFloat(document.getElementById("leveys").value);
+            const korkeus = parseFloat(document.getElementById("korkeus").value);
+            const syvyys = parseFloat(document.getElementById("syvyys").value);
+
+            // Tarkistetaan onko syötteet tyhjät
+            if (document.getElementById("leveys").value == "" || document.getElementById("korkeus").value == "" || document.getElementById("syvyys").value == "") {
+                document.getElementById("virhe").innerHTML = "Ole hyvä ja täytä kaikki kentät.";
+                return;
+            }
+
+            // Tarkistetaan onko syötteet numeroita
+            if (isNaN(leveys) || isNaN(korkeus) || isNaN(syvyys)) {
+                const virhe = "Ole hyvä ja syötä vain numeroita";
+                // Asetetaan virheilmoitus
+                document.getElementById("virhe").innerHTML = virhe;
+                return;
+            }
+            // Tarkistetaan onko syötteet suurempia kuin 0
+            if (leveys <= 0 || korkeus <= 0 || syvyys <= 0) {
+                const virhe = "Ole hyvä ja syötä lukuja jotka ovat suurempia kuin 0";
+                // Asetetaan virheilmoitukset
+                document.getElementById("virhe").innerHTML = virhe;
+                return;
+            }
+            const tilavuus = Lasketilavuus(leveys, syvyys, korkeus);
+            document.getElementById("tilavuus").value = tilavuus;
+
+            // Poistetaan entiset virheilmoitukset
+            Tyhjennavirheet();
+        }
+        const Lasketilavuus = (leveys, syvyys, korkeus) => {
+            // Lasketaan tilavuus
+            let tilavuus = leveys * syvyys * korkeus;
+            // Pyöristetään tilavuus 2 desimaalin tarkkuudella
+            tilavuus = Math.round(tilavuus * 100) / 100;
+
+            return tilavuus;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kello</title>
+    <style>
+        html, body {
+            margin: 0;
+        }
+        #sisalto {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        #kello {
+            padding: 10px;
+            border: 1px solid rgba(117, 116, 116, 0.301);
+            border-radius: 5px;
+            box-shadow: 5px 5px 15px rgba(85, 85, 85, 0.438);
+            font-size: larger;
+            font-weight: bold;
+            font-family: 'Courier New', Courier, monospace;
+        }
+    </style>
+    <script>
+        // Jos annettu aika on alle 10, lisätään nolla eteen.
+        const LisaaNolla = (aika) => {
+            return aika < 10 ? "0" + aika : aika;
+        }
+
+        const Kello = () => {
+            const nyt = new Date();
+            const paivat = new Array("Sunnuntai", "Maanantai", "Tiistai", "Keskiviikko", "Torstai", "Perjantai", "Lauantai");
+            const kuukaudet = new Array("Tammikuu", "Helmikuu", "Maaliskuu", "Huhtikuu", "Toukokuu", "Kesäkuu", "Heinäkuu", "Elokuu", "Syyskuu", "Lokakuu", "Marraskuu", "Joulukuu");
+            const tunnit = LisaaNolla(nyt.getHours());
+            const minuutit = LisaaNolla(nyt.getMinutes());
+            const sekunnit = LisaaNolla(nyt.getSeconds());
+
+            let aika = `Tänään on:
+                ${paivat[nyt.getDay()]}, ${kuukaudet[nyt.getMonth()]} ${nyt.getFullYear()}
+                ${tunnit}:${minuutit}:${sekunnit}`;
+
+            document.getElementById("kello").innerHTML = aika.toString();
+        }
+        // kutsutaan kelloa 1000ms välein
+        setInterval(Kello, 1000);
+        // Kutsutaan kello funktiota kun sivu on latautunut
+        document.addEventListener("DOMContentLoaded", Kello);
+    </script>
+</head>
+<body>
+    <div id="sisalto">
+        <div id="kello">Ladataan..</div>
+    </div>
+</body>
+</html>
