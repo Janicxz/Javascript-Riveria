@@ -51,7 +51,7 @@
             // pyöristetään pitsan hinta
             hinta = Math.round(hinta * 100) / 100;
             document.getElementById("pizza_hinta").value = hinta;
-            console.log("Pizzan hinta on", hinta, "€, Valinta:", pizzateksti);
+            console.log("Pizzan hinnaksi tulee", hinta, "€, Valinta:", pizzateksti);
         }
         // Laskee tilausten hinnan yhteensä
         const laskeTilaustenHinta = () => {
@@ -315,110 +315,113 @@
     </script>
 </head>
 <body>
-    <h1>Pizzalaskuri</h1>
-    <table>
-        <tbody>
-        <tr>
-            <td>Valitse koko</td>
-            <td>
-                <input type="radio" id="koko_normaali" name="koko" value="5" checked >
-                <label for="koko_normaali">Normaali (5 €)</label>
-            </td>
-            <td></td>
-        </tr>
-        <tr>
-            <td></td>
-            <td>
-                <input type="radio" id="koko_perhe" name="koko" value="7" >
-                <label for="koko_perhe">Perhe (7 €)</label>
-            </td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Valitse täytteet:</td>
-            <td>
-                <input type="checkbox" id="tayte_kinkku" value="0.7" >
-                <label for="tayte_kinkku">Kinkku (0,70 €)</label>
-            </td>
-            <td></td>
-        </tr>
-        <tr>
-            <td></td>
-            <td>
-                <input type="checkbox" id="tayte_ananas" value="0.6">
-                <label for="tayte_ananas">Ananas (0,60 €)</label>
-            </td>
-            <td></td>
-        </tr>
-        <tr>
-            <td></td>
-            <td>
-                <input type="checkbox" id="tayte_tonnikala" value="0.5">
-                <label for="tayte_tonnikala">Tonnikala (0,50 €)</label>
-            </td>
-            <td></td>
-        </tr>
-        <tr>
-            <td></td>
-            <td>
-                <input type="checkbox" id="tayte_herkkusieni" value="0.5">
-                <label for="tayte_herkkusieni">Herkkusieni (0,50 €)</label>
-            </td>
-            <td></td>
-        </tr>
-        <tr>
-            <td></td>
-            <td>
-                <input type="checkbox" id="tayte_oliivi" value="0.5">
-                <label for="tayte_oliivi">Oliivi (0,50 €)</label>
-            </td>
-            <td></td>
-        </tr>
-        <tr>
-            <td></td>
-            <td>
-                <input type="checkbox" id="tayte_lisajuusto" value="0.7">
-                <label for="tayte_lisajuusto">Lisäjuusto (0,70 €)</label>
-            </td>
-            <td></td>
-        </tr>
-        <tr>
-            <td><label for="pizza_hinta">Pizzan hinta:</label></td>
-            <td><input type="text" id="pizza_hinta" readonly></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td><label for="pizza_maara">Määrä:</label></td>
-            <td><input type="number" id="pizza_maara" value="1"></td>
-            <td><p class="virhe" id="virhe_maara"></p></td>
-        </tr>
-        <tr>
-            <td></td>
-            <td>
-                <input type="button" value="Tilaa" onclick="TilaaPizza()">
-                <input type="button" value="Tyhjennä" onclick="TyhjennaKentat()">
-            </td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Tilatut pizzat:</td>
-            <td>
-                <div id="ostoskori"></div>
-            </td>
-            <td><input type="hidden" id="valitut_taytteet"></td>
-        </tr>
-        <tr>
-            <td><label for="hinta_yhteensa">Yhteensä:</label></td>
-            <td><input type="text" id="hinta_yhteensa" readonly></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td> <input type="button" value="Tulosta tilaus" onclick="TulostaTilaus()"></td>
-            <td></td>
-            <td></td>
-        </tr>
-        </tbody>
-    </table>
+    
+    <div id="laskuri">
+        <h1>Pizzalaskuri</h1>
+        <table>
+            <tbody>
+            <tr>
+                <td>Valitse koko</td>
+                <td>
+                    <input type="radio" id="koko_normaali" name="koko" value="5" checked >
+                    <label for="koko_normaali">Normaali (5 €)</label>
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <input type="radio" id="koko_perhe" name="koko" value="7" >
+                    <label for="koko_perhe">Perhe (7 €)</label>
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Valitse täytteet:</td>
+                <td>
+                    <input type="checkbox" id="tayte_kinkku" value="0.7" >
+                    <label for="tayte_kinkku">Kinkku (0,70 €)</label>
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <input type="checkbox" id="tayte_ananas" value="0.6">
+                    <label for="tayte_ananas">Ananas (0,60 €)</label>
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <input type="checkbox" id="tayte_tonnikala" value="0.5">
+                    <label for="tayte_tonnikala">Tonnikala (0,50 €)</label>
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <input type="checkbox" id="tayte_herkkusieni" value="0.5">
+                    <label for="tayte_herkkusieni">Herkkusieni (0,50 €)</label>
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <input type="checkbox" id="tayte_oliivi" value="0.5">
+                    <label for="tayte_oliivi">Oliivi (0,50 €)</label>
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <input type="checkbox" id="tayte_lisajuusto" value="0.7">
+                    <label for="tayte_lisajuusto">Lisäjuusto (0,70 €)</label>
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td><label for="pizza_hinta">Pizzan hinta:</label></td>
+                <td><input type="text" id="pizza_hinta" readonly></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td><label for="pizza_maara">Määrä:</label></td>
+                <td><input type="number" id="pizza_maara" value="1"></td>
+                <td><p class="virhe" id="virhe_maara"></p></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <input type="button" value="Tilaa" onclick="TilaaPizza()">
+                    <input type="button" value="Tyhjennä" onclick="TyhjennaKentat()">
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Tilatut pizzat:</td>
+                <td>
+                    <div id="ostoskori"></div>
+                </td>
+                <td><input type="hidden" id="valitut_taytteet"></td>
+            </tr>
+            <tr>
+                <td><label for="hinta_yhteensa">Yhteensä:</label></td>
+                <td><input type="text" id="hinta_yhteensa" readonly></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td> <input type="button" value="Tulosta tilaus" onclick="TulostaTilaus()"></td>
+                <td></td>
+                <td></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
     <textarea cols="50" rows="5" id="tulostusKuitti" ></textarea>
 </body>
 </html>
