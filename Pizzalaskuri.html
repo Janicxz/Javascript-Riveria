@@ -4,8 +4,220 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pizzalaskuri</title>
+    <style>
+        .virhe {
+            color: red;
+            font-weight: bold;
+        }
+        table {
+            display: table;
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+        tr {
+            display: table-row;
+        }
+        td {
+            border: 1px solid black;
+            display: table-cell;
+        }
+    </style>
+    <script>
+        const Laskepizzanhinta = () => {
+            let hinta = 0;
+            let pizzateksti = "";
+
+            // Tarkistetaan valitut täytteet sekä pohja ja lisätään ne pizzan hintaan
+            const elems = document.querySelectorAll("input");
+            let ensimmainen = true;
+            elems.forEach(elem => {
+                //  Jos input elementti ei ole radio tai checkbox tyyppinen, ei tehdä mitään
+                if (elem.type !== "radio" && elem.type !== "checkbox") {
+                    return;
+                }
+                // Lisätään hintaan vain valitut täytteet ja pohjat
+                hinta += elem.checked ? parseFloat(elem.value) : 0;
+                if (ensimmainen) {
+                    // Ensimmäisellä kerralla ei lisätä pilkkua pizzavalintaan
+                    pizzateksti += elem.checked ? elem.labels[0].innerText.split(' ')[0] : "";
+                    if (pizzateksti !== "") {
+                        ensimmainen = false;
+                    }
+                    return;
+                }
+                pizzateksti += elem.checked ? "," + elem.labels[0].innerText.split(' ')[0] : "";
+                
+            })
+            document.getElementById("valitut_taytteet").value = pizzateksti;
+            document.getElementById("pizza_hinta").value = hinta;
+            console.log("Pizzan hinta on", hinta, "€, Valinta:", pizzateksti);
+        }
+        const Tilaapizza = () => {
+            const valitut_taytteet = document.getElementById("valitut_taytteet").value;
+            const hinta = document.getElementById("pizza_hinta").value;
+            let maara = document.getElementById("pizza_maara").value;
+
+            if (isNaN(maara)) {
+                document.getElementById("virhe_maara").innerHTML = "Virhe! Syötäthän vain numeroita.";
+                return;
+            }
+            if (maara % 1 !== 0) {
+                document.getElementById("virhe_maara").innerHTML = "Virhe! Syötäthän vain kokonaislukuja.";
+                return;
+            }
+            if (maara <= 0 || maara > 10)  {
+                document.getElementById("virhe_maara").innerHTML = "Virhe! Määrä sallittu väliltä 1-10.";
+                return;
+             }
+            document.getElementById("virhe_maara").innerHTML = "";
+
+            // Lisätään tilattu pizza tekstialueeseen
+            document.getElementById("tilatut_pizzat").value += `${valitut_taytteet} \t ${maara} kpl \t  ${hinta} € \t ${hinta * maara} €\r\n`
+            console.log("Tilattu pizza", valitut_taytteet, "hinta:", hinta, "€, määrä:", maara);
+            // Haetaan hinta yhteensä tähän mennessä, ja lisätään siihen tämän tilauksen arvo
+            let hinta_yht = parseFloat(document.getElementById("hinta_yhteensa").value);
+            // Jos ei aikaisempia tilauksia, aloitetaan nollasta
+            if (isNaN(hinta_yht)) hinta_yht = 0;
+            hinta_yht += hinta * maara;
+            document.getElementById("hinta_yhteensa").value = hinta_yht;
+        }
+        const Tyhjennakentat = () => {
+            // Tyhjennetään checkbox valinnat
+            const elems = document.querySelectorAll("input");
+            elems.forEach(e => {
+                if (e.type === "checkbox") {
+                    e.checked = false;
+                }
+            });
+            // Valitaan normaali koko oletuksena
+            document.getElementById("koko_normaali").checked = true;
+            document.getElementById("pizza_hinta").value = "";
+            // Oletuksena pizzojen määrä 1
+            document.getElementById("pizza_maara").value = 1;
+            document.getElementById("hinta_yhteensa").value = "";
+            // Tyhjennetään tilausten tekstialue
+            document.getElementById("tilatut_pizzat").value = "";
+
+            // Tyhjennetään virheilmoitus
+            document.getElementById("virhe_maara").innerHTML = "";
+
+            // Lopuksi lasketaan pizzan hinta uudelleen oletusarvoilla
+            Laskepizzanhinta();
+        }
+
+        // Ajetaan vasta kun sivu on latautunut
+        addEventListener("load", () => {
+            // Valitaan kaikki input elementit ja lisätään niihin click eventlistener
+            const elems = document.querySelectorAll("input");
+            elems.forEach(elem => {
+                //  Jos input elementti ei ole radio tai checkbox tyyppinen, ei lisätä eventlistener
+                if (elem.type !== "radio" && elem.type !== "checkbox") {
+                    return;
+                }
+                elem.addEventListener("click", Laskepizzanhinta);
+            })
+            Laskepizzanhinta();
+        });
+    </script>
 </head>
 <body>
-    
+    <h1>Pizzalaskuri</h1>
+    <table>
+        <tbody>
+        <tr>
+            <td>Valitse koko</td>
+            <td>
+                <input type="radio" id="koko_normaali" name="koko" value="5" checked >
+                <label for="koko_normaali">Normaali (5 €)</label>
+            </td>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+                <input type="radio" id="koko_perhe" name="koko" value="7" >
+                <label for="koko_perhe">Perhe (7 €)</label>
+            </td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Valitse täytteet:</td>
+            <td>
+                <input type="checkbox" id="tayte_kinkku" value="0.7" >
+                <label for="tayte_kinkku">Kinkku (0,70 €)</label>
+            </td>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+                <input type="checkbox" id="tayte_ananas" value="0.6">
+                <label for="tayte_ananas">Ananas (0,60 €)</label>
+            </td>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+                <input type="checkbox" id="tayte_tonnikala" value="0.5">
+                <label for="tayte_tonnikala">Tonnikala (0,50 €)</label>
+            </td>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+                <input type="checkbox" id="tayte_herkkusieni" value="0.5">
+                <label for="tayte_herkkusieni">Herkkusieni (0,50 €)</label>
+            </td>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+                <input type="checkbox" id="tayte_oliivi" value="0.5">
+                <label for="tayte_oliivi">Oliivi (0,50 €)</label>
+            </td>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+                <input type="checkbox" id="tayte_lisajuusto" value="0.7">
+                <label for="tayte_lisajuusto">Lisäjuusto (0,70 €)</label>
+            </td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><label for="pizza_hinta">Pizzan hinta:</label></td>
+            <td><input type="text" id="pizza_hinta" readonly></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><label for="pizza_maara">Määrä:</label></td>
+            <td><input type="number" id="pizza_maara" value="1"></td>
+            <td><p class="virhe" id="virhe_maara"></p></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+                <input type="button" value="Tilaa" onclick="Tilaapizza()"> 
+                <input type="button" value="Tyhjennä" onclick="Tyhjennakentat()">
+            </td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><label for="tilatut_pizzat">Tilatut pizzat:</label></td>
+            <td><textarea cols="80" rows="5" id="tilatut_pizzat"></textarea></td>
+            <td><input type="hidden" id="valitut_taytteet"></td>
+        </tr>
+        <tr>
+            <td><label for="hinta_yhteensa">Yhteensä:</label></td>
+            <td><input type="text" id="hinta_yhteensa" readonly></td>
+            <td></td>
+        </tr>
+        </tbody>
+        </table>
+        <!-- DivTable.com -->
 </body>
 </html>
