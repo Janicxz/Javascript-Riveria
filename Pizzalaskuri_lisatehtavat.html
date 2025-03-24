@@ -64,7 +64,7 @@
                 }
                 hinta += parseFloat(e.value);
 
-                console.log("tilausrivi hinta ", e.value);
+                console.log("tilausrivin hinta ", e.value);
             });
             // Ei jaeta nollalla
             if (hinta !== 0) {
@@ -112,6 +112,9 @@
             // Päivitetään tämän tilausrivin yhteishinta
             document.getElementById("pizza_hinta_yhteensa_" + rivi.tilausrivi_id).value = hintaYht;
             console.log("Tilauksen", rivi.tilausrivi_id, "hinta on yhteensä:", hintaYht);
+            
+            // Lasketaan vielä kaikkien tilausten hinta yhteensä
+           laskeTilaustenHinta();
 
         }
         const lisaaMaara = (rivi) => {
@@ -127,8 +130,6 @@
             document.getElementById("pizza_maara_" + tilausrivi_id).value = maara;
             // Päivitetään tilausrivin hinta lopuksi
             laskeRivinHinta(rivi);
-            //lisaaTilaustenHintaan(pizzaHinta);
-            laskeTilaustenHinta();
 
         }
         const vahennaMaara = (rivi) => {
@@ -144,8 +145,6 @@
             document.getElementById("pizza_maara_" + tilausrivi_id).value = maara;
             // Päivitetään tilausrivin hinta lopuksi
             laskeRivinHinta(rivi);
-           // lisaaTilaustenHintaan(-pizzaHinta);
-           laskeTilaustenHinta();
         }
         const paivitaRivi = (rivi) => {
 
