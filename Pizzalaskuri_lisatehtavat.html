@@ -159,7 +159,11 @@
             laskeRivinHinta(rivi);
         }
         const TulostaTilaus = () => {
+            let kuitti = document.getElementById("tulostusKuitti");
+            kuitti.hidden = false;
+            kuitti.innerHTML = "test";
             window.print();
+            kuitti.hidden = true;
         }
         // Laskuri tilausrivin id:lle
         let tilausrivi_id = 0;
@@ -238,6 +242,8 @@
             rivi.appendChild(riviPoista);
             // Lisätään tilausrivi ostoskoriin
             document.getElementById("ostoskori").appendChild(rivi);
+            // Lasketaan tilausten hinta
+            laskeRivinHinta(rivi);
         }
 
         const TilaaPizza = () => {
@@ -263,14 +269,6 @@
 
             //document.getElementById("tilatut_pizzat").value += `${valitut_taytteet} \t ${maara} kpl \t  ${hinta} € \t ${hinta * maara} €\r\n`
             console.log("Tilattu pizza", valitutTaytteet, "hinta:", hinta, "€, määrä:", maara);
-            // Haetaan hinta yhteensä tähän mennessä, ja lisätään siihen tämän tilauksen arvo
-            let hintaYht = parseFloat(document.getElementById("hinta_yhteensa").value);
-            // Jos ei aikaisempia tilauksia, aloitetaan nollasta
-            if (isNaN(hintaYht)) hintaYht = 0;
-            hintaYht += hinta * maara;
-            // Pyöristetään hinta
-            hintaYht = Math.round(hintaYht * 100) / 100;
-            document.getElementById("hinta_yhteensa").value = hintaYht;
         }
         const TyhjennaKentat = () => {
             // Tyhjennetään checkbox valinnat
@@ -420,7 +418,7 @@
             <td></td>
         </tr>
         </tbody>
-        </table>
-        <!-- DivTable.com -->
+    </table>
+    <textarea cols="50" rows="5" id="tulostusKuitti" ></textarea>
 </body>
 </html>
