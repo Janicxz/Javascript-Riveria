@@ -63,8 +63,7 @@
                     console.log("Virhe! Tilauksen hintaa ei voitu lisätä, ei ole numero", tilauksenHintaYht);
                 }
                 hinta += parseFloat(e.value);
-
-                console.log("tilausrivin hinta ", e.value);
+                //console.log("tilausrivin hinta ", e.value);
             });
             // Ei jaeta nollalla
             if (hinta !== 0) {
@@ -88,8 +87,6 @@
                 console.log("Virhe! Rivin hinta tai hinta yhteensä ei ole numero", rivi_hintayht);
                 return;
             }
-            // Vähennetään tämä tilaus yhteishinnasta
-            //lisaaTilaustenHintaan(-rivi_hintayht);
             // Poistetaan tämä rivi
             rivi.remove();
             // Lasketaan tilausten yhteishinta uudelleen
@@ -98,6 +95,7 @@
             // Jos tämä on viimeinen tilausrivi, nollataan myös tilausrivi_id
             if (tilausrivimaara === 0) tilausrivi_id = 0;
         }
+        // Laskee tämän tilausrivin hinnan ja lopuksi päivittää tilausten yhteishinnan ostoskorissa
         const laskeRivinHinta = (rivi) => {
             const tilausrivi_id = rivi.tilausrivi_id;
             let maara = parseInt(document.getElementById("pizza_maara_" + tilausrivi_id).value);
@@ -146,8 +144,19 @@
             // Päivitetään tilausrivin hinta lopuksi
             laskeRivinHinta(rivi);
         }
-        const paivitaRivi = (rivi) => {
-
+        const muokkaaTaytteita = (rivi) => {
+            // Haetaan valitut täytteet ja pizzapohja
+            const taytteet = document.getElementById("valitut_taytteet").value;
+            // Haetaan täytteiden ja pohjan hinta yhteensä
+            const hinta = parseFloat(document.getElementById("pizza_hinta").value);
+            if (isNaN(hinta)) {
+                console.log("Virhe! Tilausrivin täytteitä ei voi muokata, pizzan hinta ei ole numero");
+            }
+            // Päivitetään tilausrivin tiedot
+            document.getElementById("pizza_taytteet_" + rivi.tilausrivi_id).value = taytteet;
+            document.getElementById("pizza_hinta_" + rivi.tilausrivi_id).value = hinta;
+            // Lasketaan tilausrivin hinta uudelleen
+            laskeRivinHinta(rivi);
         }
         // Laskuri tilausrivin id:lle
         let tilausrivi_id = 0;
@@ -178,7 +187,7 @@
             const pizzaMuokkaa = document.createElement("input");
             pizzaMuokkaa.type = "button";
             pizzaMuokkaa.value = "Muokkaa";
-            pizzaMuokkaa.onclick = () => paivitaRivi(rivi);
+            pizzaMuokkaa.onclick = () => muokkaaTaytteita(rivi);
             rivi.appendChild(pizzaMuokkaa);
             // Lisätään + painike määrälle
             const pizza_maara_lisaa = document.createElement("input");
