@@ -158,6 +158,9 @@
             // Lasketaan tilausrivin hinta uudelleen
             laskeRivinHinta(rivi);
         }
+        const TulostaTilaus = () => {
+            window.print();
+        }
         // Laskuri tilausrivin id:lle
         let tilausrivi_id = 0;
         // Laskuri tilausten määrälle
@@ -409,6 +412,11 @@
         <tr>
             <td><label for="hinta_yhteensa">Yhteensä:</label></td>
             <td><input type="text" id="hinta_yhteensa" readonly></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td> <input type="button" value="Tulosta tilaus" onclick="TulostaTilaus()"></td>
+            <td></td>
             <td></td>
         </tr>
         </tbody>
