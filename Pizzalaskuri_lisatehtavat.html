@@ -37,18 +37,18 @@
             let ensimmainen = true;
             elems.forEach(elem => {
                 //  Jos input elementti ei ole radio tai checkbox tyyppinen, ei tehdä mitään
+                console.log(elem.type);
                 if (elem.type !== "radio" && elem.type !== "checkbox") {
                     return;
                 }
-                // Lisätään hintaan vain valitut täytteet ja pohjat
+                // Lisätään hintaan sekä tekstiin vain valitut täytteet ja pohjat
+                if (!elem.checked) return;
                 // Pohjan ja täytteiden hinta haetaan elementin arvosta
-                hinta += elem.checked ? parseFloat(elem.value) : 0;
+                hinta += parseFloat(elem.value);
                 if (ensimmainen) {
                     // Ensimmäisellä kerralla ei lisätä pilkkua pizzavalinta tekstiin
                     pizzateksti += elem.checked ? elem.labels[0].innerText.split(' ')[0] : "";
-                    if (pizzateksti !== "") {
-                        ensimmainen = false;
-                    }
+                    ensimmainen = false;
                     return;
                 }
                 pizzateksti += elem.checked ? "," + elem.labels[0].innerText.split(' ')[0] : "";
