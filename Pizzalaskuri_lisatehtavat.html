@@ -24,6 +24,17 @@
             border: none;
             resize: none;
         }
+        #laskuri {
+            border: 1px solid rgba(0, 0, 0, 0.356);
+            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.349);
+            padding: 10px;
+            width: 80%;
+            min-height: 90vh;
+            justify-self: center;
+        }
+        #laskuri h1 {
+            text-align: center;
+        }
     </style>
     <script>
         // Laskee tilattavan pizzan hinnan ja päivittää käyttäjälle näkyvät arvot
@@ -354,12 +365,12 @@
             // Valitaan kaikki input elementit ja lisätään niihin click eventlistener
             const elems = document.querySelectorAll("input");
             elems.forEach(elem => {
-                //  Jos input elementti ei ole radio tai checkbox tyyppinen, ei lisätä eventlistener
-                if (elem.type !== "radio" && elem.type !== "checkbox") {
-                    return;
+                //  Lisätään eventlistener vain radio ja checkbox tyyppisiin elementteihin
+                if (elem.type === "radio" || elem.type === "checkbox") {
+                    elem.addEventListener("click", LaskePizzanHinta);
                 }
-                elem.addEventListener("click", LaskePizzanHinta);
             })
+            // Lasketaan pizzan hinta oletusarvoilla
             LaskePizzanHinta();
         });
     </script>
