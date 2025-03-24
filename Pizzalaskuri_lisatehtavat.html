@@ -36,11 +36,6 @@
             const elems = document.querySelectorAll("input");
             let ensimmainen = true;
             elems.forEach(elem => {
-                //  Jos input elementti ei ole radio tai checkbox tyyppinen, ei tehdä mitään
-                console.log(elem.type);
-                if (elem.type !== "radio" && elem.type !== "checkbox") {
-                    return;
-                }
                 // Lisätään hintaan sekä tekstiin vain valitut täytteet ja pohjat
                 if (!elem.checked) return;
                 // Pohjan ja täytteiden hinta haetaan elementin arvosta
