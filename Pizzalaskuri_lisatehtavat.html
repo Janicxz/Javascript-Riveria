@@ -20,7 +20,6 @@
             display: table-cell;
         }
         #tulostusKuitti {
-            width: auto;
             font-family: 'Courier New', Courier, monospace;
             border: none;
             resize: none;
@@ -94,7 +93,11 @@
             laskeTilaustenHinta();
             tilausrivimaara--;
             // Jos tämä on viimeinen tilausrivi, nollataan myös tilausrivi_id
-            if (tilausrivimaara === 0) tilausrivi_id = 0;
+            if (tilausrivimaara === 0) {
+                tilausrivi_id = 0;
+                // Ei tulostettavia tilauksia, otetaan tulostus painike pois käytöstä
+                document.getElementById("tulostaKuitti").disabled = true;
+            }
         }
         // Laskee tämän tilausrivin hinnan ja lopuksi päivittää tilausten yhteishinnan ostoskorissa
         const laskeRivinHinta = (rivi) => {
@@ -287,6 +290,9 @@
             document.getElementById("ostoskori").appendChild(rivi);
             // Lasketaan tilausten hinta
             laskeRivinHinta(rivi);
+            
+            // Otetaan tulostus painike käyttöön
+            document.getElementById("tulostaKuitti").disabled = false;
         }
         // Lisää pizzan ostoskoriin valituilla täytteillä ja pohjalla
         const TilaaPizza = () => {
@@ -309,7 +315,6 @@
             document.getElementById("virhe_maara").innerHTML = "";
 
              lisaaRivi(valitutTaytteet, hinta, maara);
-
             console.log("Tilattu pizza", valitutTaytteet, "hinta:", hinta, "€, määrä:", maara);
         }
         // Tyhjentää kaikki kentät ja asettaa takaisin oletusarvot
@@ -340,6 +345,8 @@
 
             // Lopuksi lasketaan pizzan hinta uudelleen oletusarvoilla
             LaskePizzanHinta();
+            // Ei tulostettavia tilauksia, otetaan tulostus painike pois käytöstä
+            document.getElementById("tulostaKuitti").disabled = true;
         }
 
         // Ajetaan vasta kun sivu on latautunut
@@ -458,7 +465,7 @@
                 <td></td>
             </tr>
             <tr>
-                <td> <input type="button" value="Tulosta kuitti" onclick="TulostaTilaus()"></td>
+                <td> <input type="button" value="Tulosta kuitti" id="tulostaKuitti" disabled onclick="TulostaTilaus()"></td>
                 <td></td>
                 <td></td>
             </tr>
