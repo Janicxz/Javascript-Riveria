@@ -8,17 +8,15 @@
         .virhe {
             color: red;
             font-weight: bold;
+            margin: 0px;
         }
         table {
             display: table;
-            border: 1px solid black;
-            border-collapse: collapse;
         }
         tr {
             display: table-row;
         }
         td {
-            border: 1px solid black;
             display: table-cell;
         }
     </style>
@@ -49,6 +47,8 @@
                 
             })
             document.getElementById("valitut_taytteet").value = pizzateksti;
+            // pyöristetään pitsan hinta
+            hinta = Math.round(hinta * 100) / 100;
             document.getElementById("pizza_hinta").value = hinta;
             console.log("Pizzan hinta on", hinta, "€, Valinta:", pizzateksti);
         }
@@ -79,6 +79,8 @@
             // Jos ei aikaisempia tilauksia, aloitetaan nollasta
             if (isNaN(hinta_yht)) hinta_yht = 0;
             hinta_yht += hinta * maara;
+            // Pyöristetään hinta
+            hinta_yht = Math.round(hinta_yht * 100) / 100;
             document.getElementById("hinta_yhteensa").value = hinta_yht;
         }
         const Tyhjennakentat = () => {
@@ -201,7 +203,7 @@
         <tr>
             <td></td>
             <td>
-                <input type="button" value="Tilaa" onclick="Tilaapizza()"> 
+                <input type="button" value="Tilaa" onclick="Tilaapizza()">
                 <input type="button" value="Tyhjennä" onclick="Tyhjennakentat()">
             </td>
             <td></td>
