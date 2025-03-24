@@ -23,11 +23,11 @@
             width: auto;
             font-family: 'Courier New', Courier, monospace;
             border: none;
-            resize: both;
+            resize: none;
         }
     </style>
     <script>
-        // Laskee pizzan valintojen hinnan ja päivittää käyttäjälle näkyvät arvot
+        // Laskee tilattavan pizzan hinnan ja päivittää käyttäjälle näkyvät arvot
         const LaskePizzanHinta = () => {
             let hinta = 0;
             let pizzateksti = "";
@@ -121,6 +121,7 @@
            laskeTilaustenHinta();
 
         }
+        // Lisää tilausrivin tilauksen määrää yhdellä
         const lisaaMaara = (rivi) => {
             const tilausrivi_id = rivi.tilausrivi_id;
             let maara = parseInt(document.getElementById("pizza_maara_" + tilausrivi_id).value);
@@ -136,6 +137,7 @@
             laskeRivinHinta(rivi);
 
         }
+        // Vähentää tilausrivin tilauksen määrää yhdellä
         const vahennaMaara = (rivi) => {
             const tilausrivi_id = rivi.tilausrivi_id;
             let maara = parseInt(document.getElementById("pizza_maara_" + tilausrivi_id).value);
@@ -150,6 +152,7 @@
             // Päivitetään tilausrivin hinta lopuksi
             laskeRivinHinta(rivi);
         }
+        // Hakee valitulle tilaukselle käyttäjän valitsemat uudet täytteet ja laskee hinnat uudelleen
         const muokkaaTaytteita = (rivi) => {
             // Haetaan valitut täytteet ja pizzapohja
             const taytteet = document.getElementById("valitut_taytteet").value;
@@ -164,10 +167,14 @@
             // Lasketaan tilausrivin hinta uudelleen
             laskeRivinHinta(rivi);
         }
+        // Tulostaa ostoskorissa olevat tilaukset
         const TulostaTilaus = () => {
+            // Haetaan kuitin tekstikenttä elementti joka näytetään tulostaessa
             let kuitti = document.getElementById("tulostusKuitti");
+            // Haetaan pizzalaskurin elementti joka piilotetaan tulostaessa
             let laskuri = document.getElementById("laskuri");
             let kuittiTeksti = "";
+            // Tilausrivien yhteenlaskettu hinta
             let tilauksenHinta = document.getElementById("hinta_yhteensa").value;
 
             // Haetaan kaikki tilausrivit
@@ -176,26 +183,30 @@
             // Lisätään jokaisen rivin tiedot kuittiin
             tilaukset.forEach(tilaus => {
                 console.log("tilaus", tilaus);
+                // Haetaan tilauksen täytteet, määrä, kpl hinta ja hinta yhteensä
                 const taytteet = tilaus.querySelector("input[name='pizza_taytteet']").value;
-                const maara = tilaus.querySelector("input[name='tilausrivi_pizza_maara']").value;
+                const maara = parseInt(tilaus.querySelector("input[name='tilausrivi_pizza_maara']").value);
                 const hinta = parseFloat(tilaus.querySelector("input[name='tilausrivi_pizza_hinta']").value);
                 const hintaYht = parseFloat(tilaus.querySelector("input[name='pizzaHintaYhteensa']").value);
 
-                if (taytteet === "" || isNaN(hinta) || isNaN(hintaYht)) {
-                    console.log("Virhe! Tilauksesta uupui täytteet, tai hinnat ei ole numeroita");
+                if (taytteet === "" || isNaN(hinta) || isNaN(hintaYht) || isNaN(maara)) {
+                    console.log("Virhe! Tilauksesta uupui joko täytteet, hinnat tai määrä.");
                     return;
                 }
                 kuittiTeksti += `Pizza ${taytteet}`.padEnd(65) +  ` ${hintaYht} €\r\n`;
                 kuittiTeksti += `\t ${maara} kpl`.padEnd(20) +  ` Hinta: ${hinta} €/kpl \r\n`;
                 console.log("Tulostetaan", kuittiTeksti);
             });
-            // Lopuksi lisätään tilauksen yhteenveto
+            // Lopuksi lisätään tilauksen yhteenveto ja erotetaan se tilauksesta viivoilla
             const yhteensaTeksti = `\r\Yhteensä: ${tilauksenHinta} €`;
             kuittiTeksti += "".padEnd(yhteensaTeksti.length, "-");
             kuittiTeksti += yhteensaTeksti;
+            // Näytetään kuitti elementti
             kuitti.hidden = false;
+            // Piilotetaan muu käyttöliittymä tulostuksen ajaksi
             laskuri.hidden = true;
             kuitti.innerHTML = kuittiTeksti;
+            // Kysytään käyttäjältä tulostetaanko kuitti
             window.print();
             kuitti.hidden = true;
             laskuri.hidden = false;
@@ -282,7 +293,7 @@
             // Lasketaan tilausten hinta
             laskeRivinHinta(rivi);
         }
-
+        // Lisää pizzan ostoskoriin valituilla täytteillä ja pohjalla
         const TilaaPizza = () => {
             const valitutTaytteet = document.getElementById("valitut_taytteet").value;
             const hinta = document.getElementById("pizza_hinta").value;
@@ -304,9 +315,9 @@
 
              lisaaRivi(valitutTaytteet, hinta, maara);
 
-            //document.getElementById("tilatut_pizzat").value += `${valitut_taytteet} \t ${maara} kpl \t  ${hinta} € \t ${hinta * maara} €\r\n`
             console.log("Tilattu pizza", valitutTaytteet, "hinta:", hinta, "€, määrä:", maara);
         }
+        // Tyhjentää kaikki kentät ja asettaa takaisin oletusarvot
         const TyhjennaKentat = () => {
             // Tyhjennetään checkbox valinnat
             const elems = document.querySelectorAll("input");
