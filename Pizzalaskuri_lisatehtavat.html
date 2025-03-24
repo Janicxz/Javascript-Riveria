@@ -21,7 +21,8 @@
         }
     </style>
     <script>
-        const Laskepizzanhinta = () => {
+        // Laskee pizzan valintojen hinnan ja päivittää käyttäjälle näkyvät arvot
+        const LaskePizzanHinta = () => {
             let hinta = 0;
             let pizzateksti = "";
 
@@ -34,9 +35,10 @@
                     return;
                 }
                 // Lisätään hintaan vain valitut täytteet ja pohjat
+                // Pohjan ja täytteiden hinta haetaan elementin arvosta
                 hinta += elem.checked ? parseFloat(elem.value) : 0;
                 if (ensimmainen) {
-                    // Ensimmäisellä kerralla ei lisätä pilkkua pizzavalintaan
+                    // Ensimmäisellä kerralla ei lisätä pilkkua pizzavalinta tekstiin
                     pizzateksti += elem.checked ? elem.labels[0].innerText.split(' ')[0] : "";
                     if (pizzateksti !== "") {
                         ensimmainen = false;
@@ -44,7 +46,6 @@
                     return;
                 }
                 pizzateksti += elem.checked ? "," + elem.labels[0].innerText.split(' ')[0] : "";
-                
             })
             document.getElementById("valitut_taytteet").value = pizzateksti;
             // pyöristetään pitsan hinta
@@ -52,33 +53,109 @@
             document.getElementById("pizza_hinta").value = hinta;
             console.log("Pizzan hinta on", hinta, "€, Valinta:", pizzateksti);
         }
-        const poistarivi = (rivi, hintayht_id) => {
+        // Laskee tilausten hinnan yhteensä
+        const laskeTilaustenHinta = () => {
+            let hinta = 0;
+            const elems = document.getElementsByName("pizzaHintaYhteensa");
+            elems.forEach(e => {
+                const tilauksenHintaYht = parseFloat(e.value);
+                if (isNaN(tilauksenHintaYht)) {
+                    console.log("Virhe! Tilauksen hintaa ei voitu lisätä, ei ole numero", tilauksenHintaYht);
+                }
+                hinta += parseFloat(e.value);
+
+                console.log("tilausrivi hinta ", e.value);
+            });
+            // Ei jaeta nollalla
+            if (hinta !== 0) {
+                hinta = Math.round(hinta * 100) / 100;
+            }
+
+            document.getElementById("hinta_yhteensa").value = hinta;
+            console.log("Tilausten laskettu hinta yhteensä:", hinta);
+        }
+        // Poistaa tilausrivin ostoskorista, annetaan  poistettavan rivin elementti
+        const poistaRivi = (rivi) => {
             // Kysytään varmistus viimeisen tilauksen poistossa
             if (tilausrivimaara === 1 && !window.confirm("Haluatko varmasti poistaa viimeisen tilauksen?")) {
                 return;
             }
-            //console.log("poistetaan riviä", hintayht_id);
-            // Haetaan tilausrivin yhteishinta (pizza * määrä), ja tilausten yhteishinta kokonaisuudessa
-            const rivi_hintayht = parseFloat(document.getElementById(hintayht_id).value);
-            let hintayht = parseFloat(document.getElementById("hinta_yhteensa").value);
+            console.log("poistetaan riviä", rivi.tilausrivi_id);
+            // Haetaan tämän tilauksen hinta yhteensä (pizza * määrä)
+            const rivi_hintayht = parseFloat(document.getElementById( "pizza_hinta_yhteensa_" + rivi.tilausrivi_id).value);
             //  Tarkistetaan onko numeroita
-            if (isNaN(rivi_hintayht) || isNaN(hintayht)) {
+            if (isNaN(rivi_hintayht)) {
                 console.log("Virhe! Rivin hinta tai hinta yhteensä ei ole numero", rivi_hintayht);
                 return;
             }
             // Vähennetään tämä tilaus yhteishinnasta
-            hintayht -= rivi_hintayht;
-            // Pyöristetään
-            hintayht = Math.round(hintayht * 100) / 100;
-            // Päivitetään näkyvä yhteishinta
-            document.getElementById("hinta_yhteensa").value = hintayht;
+            //lisaaTilaustenHintaan(-rivi_hintayht);
             // Poistetaan tämä rivi
             rivi.remove();
+            // Lasketaan tilausten yhteishinta uudelleen
+            laskeTilaustenHinta();
             tilausrivimaara--;
+            // Jos tämä on viimeinen tilausrivi, nollataan myös tilausrivi_id
+            if (tilausrivimaara === 0) tilausrivi_id = 0;
         }
+        const laskeRivinHinta = (rivi) => {
+            const tilausrivi_id = rivi.tilausrivi_id;
+            let maara = parseInt(document.getElementById("pizza_maara_" + tilausrivi_id).value);
+            let pizzaHinta = parseFloat(document.getElementById("pizza_hinta_" + tilausrivi_id).value);
+            if (isNaN(maara) || isNaN(pizzaHinta)) {
+                console.log("Virhe! Tilausrivin", rivi.tilausrivi_id, "määrä tai hinta ei ole numero");
+                return;
+            }
+            let hintaYht = pizzaHinta * maara;
+            // Pyöristetään
+            hintaYht = Math.round(hintaYht * 100) / 100;
+            // Päivitetään tämän tilausrivin yhteishinta
+            document.getElementById("pizza_hinta_yhteensa_" + rivi.tilausrivi_id).value = hintaYht;
+            console.log("Tilauksen", rivi.tilausrivi_id, "hinta on yhteensä:", hintaYht);
+
+        }
+        const lisaaMaara = (rivi) => {
+            const tilausrivi_id = rivi.tilausrivi_id;
+            let maara = parseInt(document.getElementById("pizza_maara_" + tilausrivi_id).value);
+            let pizzaHinta = parseFloat(document.getElementById("pizza_hinta_" + tilausrivi_id).value);
+            if (isNaN(maara)) {
+                console.log(`Virhe! Tilausrivin ${tilausrivi_id} tilausten määrä ei ole numero`);
+            }
+            // Ei lisätä tilauksen määrää yli 10
+            if (maara === 10) return;
+            maara++;
+            document.getElementById("pizza_maara_" + tilausrivi_id).value = maara;
+            // Päivitetään tilausrivin hinta lopuksi
+            laskeRivinHinta(rivi);
+            //lisaaTilaustenHintaan(pizzaHinta);
+            laskeTilaustenHinta();
+
+        }
+        const vahennaMaara = (rivi) => {
+            const tilausrivi_id = rivi.tilausrivi_id;
+            let maara = parseInt(document.getElementById("pizza_maara_" + tilausrivi_id).value);
+            let pizzaHinta = parseFloat(document.getElementById("pizza_hinta_" + tilausrivi_id).value);
+            if (isNaN(maara)) {
+                console.log(`Virhe! Tilausrivin ${tilausrivi_id} tilausten määrä ei ole numero`);
+            }
+            // Ei vähennetä tilauksen määrää alle yhden
+            if (maara === 1) return;
+            maara--;
+            document.getElementById("pizza_maara_" + tilausrivi_id).value = maara;
+            // Päivitetään tilausrivin hinta lopuksi
+            laskeRivinHinta(rivi);
+           // lisaaTilaustenHintaan(-pizzaHinta);
+           laskeTilaustenHinta();
+        }
+        const paivitaRivi = (rivi) => {
+
+        }
+        // Laskuri tilausrivin id:lle
         let tilausrivi_id = 0;
+        // Laskuri tilausten määrälle
         let tilausrivimaara = 0;
-        const lisaarivi = (taytteet, hinta, maara) => {
+        // Lisää tilauksen ostoskoriin uutena rivinä
+        const lisaaRivi = (taytteet, hinta, maara) => {
             // Lisätään tilattu pizza tekstialueeseen
             tilausrivi_id++;
             tilausrivimaara++;
@@ -87,58 +164,73 @@
             rivi.type = "text";
             rivi.name = "tilaus_rivi";
             rivi.id = "tilaus_rivi_" + tilausrivi_id;
+            // Lisätään riville tilausrivin id erikseen, tätä käytetään poistarivi funktiossa
+            rivi.tilausrivi_id = tilausrivi_id;
             // Lisätään täytteet
-            const pizza_taytteet = document.createElement("input");
-            pizza_taytteet.type = "text";
-            pizza_taytteet.name = "pizza_taytteet";
-            pizza_taytteet.value = taytteet;
-            pizza_taytteet.readOnly = true;
-            pizza_taytteet.id = "pizza_taytteet_" + tilausrivi_id;
-            rivi.appendChild(pizza_taytteet);
-            // Lisätään + ja - painikkeet määrälle
+            const pizzaTaytteet = document.createElement("input");
+            pizzaTaytteet.type = "text";
+            pizzaTaytteet.name = "pizza_taytteet";
+            pizzaTaytteet.value = taytteet;
+            pizzaTaytteet.readOnly = true;
+            pizzaTaytteet.id = "pizza_taytteet_" + tilausrivi_id;
+            rivi.appendChild(pizzaTaytteet);
+            
+            // Lisätään muokkaa painike määrälle
+            const pizzaMuokkaa = document.createElement("input");
+            pizzaMuokkaa.type = "button";
+            pizzaMuokkaa.value = "Muokkaa";
+            pizzaMuokkaa.onclick = () => paivitaRivi(rivi);
+            rivi.appendChild(pizzaMuokkaa);
+            // Lisätään + painike määrälle
             const pizza_maara_lisaa = document.createElement("input");
             pizza_maara_lisaa.type = "button";
             pizza_maara_lisaa.value = "+";
+            pizza_maara_lisaa.onclick = () => lisaaMaara(rivi);
             rivi.appendChild(pizza_maara_lisaa);
             // Lisätään määrä kenttä
-            const pizza_maara = document.createElement("input");
-            pizza_maara.type = "text";
-            pizza_maara.size = 1;
-            pizza_maara.value = maara;
-            rivi.appendChild(pizza_maara);
-            const pizza_maara_vahenna = document.createElement("input");
-            pizza_maara_vahenna.type = "button";
-            pizza_maara_vahenna.value = "-";
-            rivi.appendChild(pizza_maara_vahenna);
-
+            const pizzaMaara = document.createElement("input");
+            pizzaMaara.type = "text";
+            pizzaMaara.size = 2;
+            pizzaMaara.value = maara;
+            pizzaMaara.readOnly = true;
+            pizzaMaara.id = "pizza_maara_" + tilausrivi_id;
+            rivi.appendChild(pizzaMaara);
+            // Lisätään - painike määrälle
+            const pizzaMaaraVahenna = document.createElement("input");
+            pizzaMaaraVahenna.type = "button";
+            pizzaMaaraVahenna.value = "-";
+            pizzaMaaraVahenna.onclick = () => vahennaMaara(rivi);
+            rivi.appendChild(pizzaMaaraVahenna);
             // Lisätään pizzan hinnat
-            const pizza_hinta = document.createElement("input");
-            pizza_hinta.type = "text";
-            pizza_hinta.readOnly = true;
-            pizza_hinta.size = 1;
-            pizza_hinta.value = hinta;
-            rivi.appendChild(pizza_hinta);
-            const pizza_hinta_yhteensa = document.createElement("input");
-            pizza_hinta_yhteensa.type = "text";
-            pizza_hinta_yhteensa.readOnly = true;
-            pizza_hinta_yhteensa.size = 1;
-            pizza_hinta_yhteensa.value = hinta * maara;
-            pizza_hinta_yhteensa.id = "pizza_hinta_yhteensa_" + tilausrivi_id;
-            rivi.appendChild(pizza_hinta_yhteensa);
+            const pizzaHinta = document.createElement("input");
+            pizzaHinta.type = "text";
+            pizzaHinta.readOnly = true;
+            pizzaHinta.size = 6;
+            pizzaHinta.value = hinta;
+            pizzaHinta.id = "pizza_hinta_" + tilausrivi_id;
+            rivi.appendChild(pizzaHinta);
+            // Lisätään tämän tilauksen yhteishinta (hinta * määrä)
+            const pizzaHintaYhteensa = document.createElement("input");
+            pizzaHintaYhteensa.type = "text";
+            pizzaHintaYhteensa.readOnly = true;
+            pizzaHintaYhteensa.size = 6;
+            pizzaHintaYhteensa.value = hinta * maara;
+            pizzaHintaYhteensa.id = "pizza_hinta_yhteensa_" + tilausrivi_id;
+            pizzaHintaYhteensa.name = "pizzaHintaYhteensa";
+            rivi.appendChild(pizzaHintaYhteensa);
             // Lisätään poista painike
-            const rivi_poista = document.createElement("input");
-            rivi_poista.type = "button";
-            rivi_poista.value = "X";
-            rivi_poista.onclick = () => {
-                poistarivi(rivi, pizza_hinta_yhteensa.id);
-            }
-            rivi.appendChild(rivi_poista);
-
+            const riviPoista = document.createElement("input");
+            riviPoista.type = "button";
+            riviPoista.value = "X";
+            riviPoista.id = "pizza_poista_" + tilausrivi_id;
+            riviPoista.onclick = () => poistaRivi(rivi);
+            rivi.appendChild(riviPoista);
+            // Lisätään tilausrivi ostoskoriin
             document.getElementById("ostoskori").appendChild(rivi);
         }
 
-        const Tilaapizza = () => {
-            const valitut_taytteet = document.getElementById("valitut_taytteet").value;
+        const TilaaPizza = () => {
+            const valitutTaytteet = document.getElementById("valitut_taytteet").value;
             const hinta = document.getElementById("pizza_hinta").value;
             let maara = document.getElementById("pizza_maara").value;
 
@@ -156,20 +248,20 @@
              }
             document.getElementById("virhe_maara").innerHTML = "";
 
-             lisaarivi(valitut_taytteet, hinta, maara);
+             lisaaRivi(valitutTaytteet, hinta, maara);
 
             //document.getElementById("tilatut_pizzat").value += `${valitut_taytteet} \t ${maara} kpl \t  ${hinta} € \t ${hinta * maara} €\r\n`
-            console.log("Tilattu pizza", valitut_taytteet, "hinta:", hinta, "€, määrä:", maara);
+            console.log("Tilattu pizza", valitutTaytteet, "hinta:", hinta, "€, määrä:", maara);
             // Haetaan hinta yhteensä tähän mennessä, ja lisätään siihen tämän tilauksen arvo
-            let hinta_yht = parseFloat(document.getElementById("hinta_yhteensa").value);
+            let hintaYht = parseFloat(document.getElementById("hinta_yhteensa").value);
             // Jos ei aikaisempia tilauksia, aloitetaan nollasta
-            if (isNaN(hinta_yht)) hinta_yht = 0;
-            hinta_yht += hinta * maara;
+            if (isNaN(hintaYht)) hintaYht = 0;
+            hintaYht += hinta * maara;
             // Pyöristetään hinta
-            hinta_yht = Math.round(hinta_yht * 100) / 100;
-            document.getElementById("hinta_yhteensa").value = hinta_yht;
+            hintaYht = Math.round(hintaYht * 100) / 100;
+            document.getElementById("hinta_yhteensa").value = hintaYht;
         }
-        const Tyhjennakentat = () => {
+        const TyhjennaKentat = () => {
             // Tyhjennetään checkbox valinnat
             const elems = document.querySelectorAll("input");
             elems.forEach(e => {
@@ -189,12 +281,13 @@
             document.getElementById("ostoskori").innerHTML = "";
             // Nollataan tilauslaskuri
             tilausrivi_id = 0;
+            tilausrivimaara = 0;
 
             // Tyhjennetään virheilmoitus
             document.getElementById("virhe_maara").innerHTML = "";
 
             // Lopuksi lasketaan pizzan hinta uudelleen oletusarvoilla
-            Laskepizzanhinta();
+            LaskePizzanHinta();
         }
 
         // Ajetaan vasta kun sivu on latautunut
@@ -206,9 +299,9 @@
                 if (elem.type !== "radio" && elem.type !== "checkbox") {
                     return;
                 }
-                elem.addEventListener("click", Laskepizzanhinta);
+                elem.addEventListener("click", LaskePizzanHinta);
             })
-            Laskepizzanhinta();
+            LaskePizzanHinta();
         });
     </script>
 </head>
@@ -293,8 +386,8 @@
         <tr>
             <td></td>
             <td>
-                <input type="button" value="Tilaa" onclick="Tilaapizza()">
-                <input type="button" value="Tyhjennä" onclick="Tyhjennakentat()">
+                <input type="button" value="Tilaa" onclick="TilaaPizza()">
+                <input type="button" value="Tyhjennä" onclick="TyhjennaKentat()">
             </td>
             <td></td>
         </tr>
