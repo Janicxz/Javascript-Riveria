@@ -19,6 +19,12 @@
         td {
             display: table-cell;
         }
+        #tulostusKuitti {
+            width: auto;
+            font-family: 'Courier New', Courier, monospace;
+            border: none;
+            resize: both;
+        }
     </style>
     <script>
         // Laskee pizzan valintojen hinnan ja päivittää käyttäjälle näkyvät arvot
@@ -160,10 +166,39 @@
         }
         const TulostaTilaus = () => {
             let kuitti = document.getElementById("tulostusKuitti");
+            let laskuri = document.getElementById("laskuri");
+            let kuittiTeksti = "";
+            let tilauksenHinta = document.getElementById("hinta_yhteensa").value;
+
+            // Haetaan kaikki tilausrivit
+            let tilaukset = document.querySelectorAll(".tilaus_rivi");
+                console.log("tilaukset", tilaukset);
+            // Lisätään jokaisen rivin tiedot kuittiin
+            tilaukset.forEach(tilaus => {
+                console.log("tilaus", tilaus);
+                const taytteet = tilaus.querySelector("input[name='pizza_taytteet']").value;
+                const maara = tilaus.querySelector("input[name='tilausrivi_pizza_maara']").value;
+                const hinta = parseFloat(tilaus.querySelector("input[name='tilausrivi_pizza_hinta']").value);
+                const hintaYht = parseFloat(tilaus.querySelector("input[name='pizzaHintaYhteensa']").value);
+
+                if (taytteet === "" || isNaN(hinta) || isNaN(hintaYht)) {
+                    console.log("Virhe! Tilauksesta uupui täytteet, tai hinnat ei ole numeroita");
+                    return;
+                }
+                kuittiTeksti += `Pizza ${taytteet}`.padEnd(65) +  ` ${hintaYht} €\r\n`;
+                kuittiTeksti += `\t ${maara} kpl`.padEnd(20) +  ` Hinta: ${hinta} €/kpl \r\n`;
+                console.log("Tulostetaan", kuittiTeksti);
+            });
+            // Lopuksi lisätään tilauksen yhteenveto
+            const yhteensaTeksti = `\r\Yhteensä: ${tilauksenHinta} €`;
+            kuittiTeksti += "".padEnd(yhteensaTeksti.length, "-");
+            kuittiTeksti += yhteensaTeksti;
             kuitti.hidden = false;
-            kuitti.innerHTML = "test";
+            laskuri.hidden = true;
+            kuitti.innerHTML = kuittiTeksti;
             window.print();
             kuitti.hidden = true;
+            laskuri.hidden = false;
         }
         // Laskuri tilausrivin id:lle
         let tilausrivi_id = 0;
@@ -177,7 +212,7 @@
             // kappale elementti johon lisätään tilausrivin tiedot
             const rivi = document.createElement("p");
             rivi.type = "text";
-            rivi.name = "tilaus_rivi";
+            rivi.className = "tilaus_rivi";
             rivi.id = "tilaus_rivi_" + tilausrivi_id;
             // Lisätään riville tilausrivin id erikseen, tätä käytetään poistarivi funktiossa
             rivi.tilausrivi_id = tilausrivi_id;
@@ -208,6 +243,7 @@
             pizzaMaara.size = 2;
             pizzaMaara.value = maara;
             pizzaMaara.readOnly = true;
+            pizzaMaara.name = "tilausrivi_pizza_maara";
             pizzaMaara.id = "pizza_maara_" + tilausrivi_id;
             rivi.appendChild(pizzaMaara);
             // Lisätään - painike määrälle
@@ -222,6 +258,7 @@
             pizzaHinta.readOnly = true;
             pizzaHinta.size = 6;
             pizzaHinta.value = hinta;
+            pizzaHinta.name = "tilausrivi_pizza_hinta";
             pizzaHinta.id = "pizza_hinta_" + tilausrivi_id;
             rivi.appendChild(pizzaHinta);
             // Lisätään tämän tilauksen yhteishinta (hinta * määrä)
@@ -415,13 +452,13 @@
                 <td></td>
             </tr>
             <tr>
-                <td> <input type="button" value="Tulosta tilaus" onclick="TulostaTilaus()"></td>
+                <td> <input type="button" value="Tulosta kuitti" onclick="TulostaTilaus()"></td>
                 <td></td>
                 <td></td>
             </tr>
             </tbody>
         </table>
     </div>
-    <textarea cols="50" rows="5" id="tulostusKuitti" ></textarea>
+    <textarea cols="80" rows="50" id="tulostusKuitti" ></textarea>
 </body>
 </html>
