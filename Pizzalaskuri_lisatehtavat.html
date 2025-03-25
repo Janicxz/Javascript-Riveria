@@ -312,7 +312,7 @@
         const TilaaPizza = () => {
             const valitutTaytteet = document.getElementById("valitut_taytteet").value;
             const hinta = document.getElementById("pizza_hinta").value;
-            let maara = document.getElementById("pizza_maara").value;
+            const maara = document.getElementById("pizza_maara").value;
 
             if (isNaN(maara)) {
                 document.getElementById("virhe_maara").innerHTML = "Virhe! Syötäthän vain numeroita.";
