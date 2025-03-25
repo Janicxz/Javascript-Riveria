@@ -1,9 +1,13 @@
-table, th, td {
+.lottoTaulukko table, .lottoTaulukko th, .lottoTaulukko td {
     border: 1px solid black;
-    border-collapse: collapse;
     padding: 10px;
 }
-table {
-    
+.lottoTaulukko table {
     margin-bottom: 20px;
+}
+
+#lottoPainikkeet {
+    display: flex;
+    flex-direction: column;
+    width: 150px;
 }

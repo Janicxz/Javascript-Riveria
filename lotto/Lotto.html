@@ -9,9 +9,27 @@
 </head>
 <body>
     <div id="lottoPainikkeet">
-        <input type="button" value="Suorita lottoarvonta" onclick="ArvoRivit()">
-        <label for="lottoVari">Valitse korostusväri:</label>
-        <input type="color" id="lottoVari" value="#ff0000">
+        <table>
+            <tbody>
+                <tr>
+                    <td><input type="button" value="Suorita lottoarvonta" onclick="ArvoRivit(7,1,39)"></td>
+                    <td>&nbsp;</td>
+                </tr>
+                <tr>
+                    <td><label for="lottoVari">Valitse korostusväri:</label></td>
+                    <td><input type="color" id="lottoVari" value="#ff0000"></td>
+                </tr>
+                <tr>
+                    <td><label for="lottoRiviMaara">Arvottavien rivien määrä:</label></td>
+                    <td><input type="text" id="lottoRiviMaara" value="7"></td>
+                </tr>
+            </tbody>
+        </table>
+        
+        
+        
+        
+       
     </div>
     <br>
     <div id="lottoTaulukot">
