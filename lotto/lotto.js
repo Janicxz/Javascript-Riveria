@@ -1,7 +1,47 @@
 // Arpoo lottorivin ja luo sille taulukon
-const ArvoRivit = (rivienMaara, alinLuku, ylinLuku) => {
+const ArvoRivit = (rivienPituus, alinLuku, ylinLuku) => {
+    PaivitaEdistymisPalkki(0);
+    const riviMaara = parseInt(document.getElementById("lottoRiviMaara").value);
+    const tallennaTiedosto = document.getElementById("tallennaRivit").checked;
+    if (isNaN(riviMaara)) {
+        console.log("Virhe! Rivien määrä ei ole numero!");
+        window.alert("Virhe! Rivien määrä ei ole numero!");
+        return;
+    }
     // Arvottavat rivit
+    let i = 1;
+    let arvotutRivitStr = "";
+    const suoritaRivi = () => {
+        if(i <= riviMaara) {
+            let lottoRivi= ArvoRivi(rivienPituus, alinLuku,ylinLuku);
+            arvotutRivitStr += lottoRivi.toString() + "\n";
+            LuoTaulukko(lottoRivi, alinLuku, ylinLuku);
+            
+            PaivitaEdistymisPalkki(Math.floor(i / riviMaara * 100));
+            i++;
+            setTimeout(suoritaRivi, 0);
+        } else {
+            if(tallennaTiedosto) {
+                var blob = new Blob([arvotutRivitStr], {type: "text/plain;charset=utf-8"});
+                saveAs(blob, "LottoRivit.txt");
+            }
+        }
+    }
+    suoritaRivi();
+}
+
+
+const PaivitaEdistymisPalkki = (leveys) => {
+    const elem = document.getElementById("myBar");
+    elem.style.width = leveys + "%";
+    elem.innerHTML = leveys + "%";
+    //console.log("Leveys", leveys);
+}
+
+const ArvoRivi = (rivienMaara, alinLuku, ylinLuku) => {
+    // Arvottava rivi
     let lottoRivi = [];
+
     if (ylinLuku - alinLuku < rivienMaara) {
         console.log("Virhe! Arvottavien rivien määrä on suurempi kuin arvottavien lukujen väli");
         return;
@@ -26,14 +66,15 @@ const ArvoRivit = (rivienMaara, alinLuku, ylinLuku) => {
             }
         }
     }
-    LuoTaulukko(lottoRivi, alinLuku, ylinLuku);
+    return lottoRivi;
 }
 
+// Muuttujat id:lle
 let taulukkoMaara = 0;
 let soluMaara = 0;
 // Luo uuden taulukon johon lisätään kaikki arvottavat numerot sekä voittorivin korostus
 const LuoTaulukko = (voittoRivit, alinLuku, ylinLuku) => {
-
+    //
     let rivitStr = "Voittava rivi on: <b>";
     for (let i = 0; i < voittoRivit.length; i++) {
         if (i === voittoRivit.length-1) {

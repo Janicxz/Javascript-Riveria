@@ -6,6 +6,7 @@
     <title>Lotto</title>
     <link rel="stylesheet" href="lotto.css">
     <script src="lotto.js"></script>
+    <script src="FileSaver.js"></script>
 </head>
 <body>
     <div id="lottoPainikkeet">
@@ -21,7 +22,20 @@
                 </tr>
                 <tr>
                     <td><label for="lottoRiviMaara">Arvottavien rivien määrä:</label></td>
-                    <td><input type="text" id="lottoRiviMaara" value="7"></td>
+                    <td><input type="text" id="lottoRiviMaara" value="1"></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div id="myProgress">
+                            <div id="myBar">
+                        </div>
+                      </div>
+                    </td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><label for="tallennaRivit">Tallenna .txt:</label><input type="checkbox" id="tallennaRivit"></td>
+                    <td></td>
                 </tr>
             </tbody>
         </table>
