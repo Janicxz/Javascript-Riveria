@@ -1,16 +1,37 @@
 const TarkistaRivit = async () => {
-    const rivit = await aukaiseTiedosto();
+    let rivit = await aukaiseTiedosto();
+    const kayttajanRivi =  haeKayttajanRivi()
+    // Tarkistetaan syötteet
+    if (!rivit) {
+        alert("Valitse ensin tiedosto!");
+        return;
+    }
+    if (kayttajanRivi === "") {
+        alert("Syötä tarkistettava lottorivi");
+        return;
+    }
+    rivit = rivit.split("\r\n");
+    rivit.forEach((rivi) => {
+        console.log("rivi:",rivi);
+    });
+}
+
+const haeKayttajanRivi = () => {
+    return document.getElementById("tarkistettavaRivi").value;
 }
 
 const aukaiseTiedosto = async () => {
     const tiedosto = document.getElementById("tarkistaRivitCheck").files[0];
-
     if (!tiedosto) {
-        alert("Valitse tiedosto!");
         return;
     }
     const teksti = await tiedosto.text();
     return teksti;
+}
+
+const tallennaRivit = (rivit) => {
+    var blob = new Blob([rivit], {type: "text/plain;charset=utf-8"});
+    saveAs(blob, "LottoRivit.txt");
 }
 
 // Arpoo lottorivit annetuilla arvoilla ja tallentaa ne .txt tiedostoon jos käyttäjä valitsi tallennuksen
@@ -32,7 +53,7 @@ const ArvoRivit = (rivienPituus, alinLuku, ylinLuku) => {
         if(i <= riviMaara) {
             // Arpoo uuden lottorivin
             let lottoRivi= ArvoRivi(rivienPituus, alinLuku,ylinLuku);
-            arvotutRivitStr += lottoRivi.toString() + "\n";
+            arvotutRivitStr += lottoRivi.toString() + "\r\n";
             // Luo uuden taulukon lottoriville
             LuoTaulukko(lottoRivi, alinLuku, ylinLuku);
             // Päivitetään edistyminen käyttöliittymään
@@ -44,8 +65,7 @@ const ArvoRivit = (rivienPituus, alinLuku, ylinLuku) => {
         } else {
             // Tallennetaan tulokset .txt tiedostona
             if(tallennaTiedosto) {
-                var blob = new Blob([arvotutRivitStr], {type: "text/plain;charset=utf-8"});
-                saveAs(blob, "LottoRivit.txt");
+                tallennaRivit(arvotutRivitStr);
             }
         }
     }
