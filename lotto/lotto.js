@@ -36,18 +36,14 @@ const TarkistaRivit = async () => {
                 if (numero === riviNumero) osumatKpl++;
             })
         });
-        // debug
-        //console.log("rivi:",rivi);
-       // console.log(`Oikein ${osumatKpl} kpl`);
         osumat[osumatKpl]++;
         // Päivitetään edistymispalkki
         if (i % 1000 === 0 || (i+1) === rivit.length) {
             await PaivitaEdistymisPalkki (Math.ceil((i+1) / rivit.length * 100), 0.1);
         }
-        //console.log("edistyminen", (Math.ceil((i+1) / rivit.length * 100)), "i ", i)
     }
-    // Näytetään käyttäjälle tilastot
     PaivitaEdistymisPalkki (100);
+    // Näytetään käyttäjälle tilastot
     let tulos = "";
     for (let i = 0; i < osumat.length; i++) {
         tulos += `${i} oikein <b>${osumat[i]}</b> kpl <br>`;
@@ -71,8 +67,11 @@ const aukaiseTiedosto = async () => {
 }
 // Tallentaa arvotut rivit lottorivit.txt tiedostoon
 const tallennaRivit = (rivit) => {
+    const tallennaCsv = document.getElementById("tallennaRivitCsv").checked;
+    const tiedostoMuoto =  tallennaCsv ? ".csv" : ".txt";
+    const blobType = tallennaCsv ? "data:text/csv;charset=utf-8" : "text/plain;charset=utf-8";
     var blob = new Blob([rivit], {type: "text/plain;charset=utf-8"});
-    saveAs(blob, "LottoRivit.txt");
+    saveAs(blob, "LottoRivit" + tiedostoMuoto);
 }
 
 // Arpoo lottorivit annetuilla arvoilla ja tallentaa ne .txt tiedostoon jos käyttäjä valitsi tallennuksen
