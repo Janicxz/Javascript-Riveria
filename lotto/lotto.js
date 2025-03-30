@@ -22,10 +22,10 @@ const TarkistaRivit = async () => {
     //  Käännetään rivi merkkijono taulukoksi
     rivit = rivit.split("\r\n");
     // Muuttuja edistymisen seuraamiselle
-    let riviNum = 0;
-    rivit.forEach((rivi) => {
-        // Jos tyhjä rivi ei tehdä mitään
-        if (rivi === "") return;
+    for (let i = 0; i < rivit.length; i++) {
+        let rivi = rivit[i];
+               // Jos tyhjä rivi ei tehdä mitään
+        if (rivi === "") continue;
 
         // Kuinka monta numeroa oikein tälle riville
         let osumatKpl = 0;
@@ -37,15 +37,17 @@ const TarkistaRivit = async () => {
             })
         });
         // debug
-        console.log("rivi:",rivi);
-        console.log(`Oikein ${osumatKpl} kpl`);
+        //console.log("rivi:",rivi);
+       // console.log(`Oikein ${osumatKpl} kpl`);
         osumat[osumatKpl]++;
-        riviNum++;
-        // Pääivitetään edistymispalkki
-        PaivitaEdistymisPalkki (Math.ceil(riviNum / rivit.length * 100));
-        //console.log("edistyminen", (Math.ceil(riviNum / rivit.length * 100)))
-    });
+        // Päivitetään edistymispalkki
+        if (i % 1000 === 0 || (i+1) === rivit.length) {
+            await PaivitaEdistymisPalkki (Math.ceil((i+1) / rivit.length * 100), 0.1);
+        }
+        //console.log("edistyminen", (Math.ceil((i+1) / rivit.length * 100)), "i ", i)
+    }
     // Näytetään käyttäjälle tilastot
+    PaivitaEdistymisPalkki (100);
     let tulos = "";
     for (let i = 0; i < osumat.length; i++) {
         tulos += `${i} oikein <b>${osumat[i]}</b> kpl <br>`;
@@ -53,7 +55,7 @@ const TarkistaRivit = async () => {
     }
     document.getElementById("tarkistaTulos").innerHTML = tulos;
     // tarkistaTulos
-}
+    }
 // Hakee käyttäjän antaman lottorivin ja palauttaa sen merkkijonon
 const haeKayttajanRivi = () => {
     return document.getElementById("tarkistettavaRivi").value;
@@ -74,7 +76,7 @@ const tallennaRivit = (rivit) => {
 }
 
 // Arpoo lottorivit annetuilla arvoilla ja tallentaa ne .txt tiedostoon jos käyttäjä valitsi tallennuksen
-const ArvoRivit = (rivienPituus, alinLuku, ylinLuku) => {
+const ArvoRivit = async(rivienPituus, alinLuku, ylinLuku) => {
     // Nollataan edistyminen
     PaivitaEdistymisPalkki(0);
     const riviMaara = parseInt(document.getElementById("lottoRiviMaara").value);
@@ -86,37 +88,33 @@ const ArvoRivit = (rivienPituus, alinLuku, ylinLuku) => {
         return;
     }
     // Arvottavat rivit
-    let i = 1;
     let arvotutRivitStr = "";
-    const suoritaRivi = () => {
-        if(i <= riviMaara) {
-            // Arpoo uuden lottorivin
-            let lottoRivi= ArvoRivi(rivienPituus, alinLuku,ylinLuku);
-            arvotutRivitStr += lottoRivi.toString() + "\r\n";
-            // Luo uuden taulukon lottoriville
-            LuoTaulukko(lottoRivi, alinLuku, ylinLuku);
-            // Päivitetään edistyminen käyttöliittymään
-            PaivitaEdistymisPalkki(Math.floor(i / riviMaara * 100));
-            i++;
-            // Silmukka toteutettu setTimeout avulla ettei käyttöliittymä hyydy suorituksen ajaksi
-            // Suoraan toteutettuna progressBar ei päivittyisi
-            setTimeout(suoritaRivi, 0);
-        } else {
-            // Tallennetaan tulokset .txt tiedostona
-            if(tallennaTiedosto) {
-                tallennaRivit(arvotutRivitStr);
-            }
+
+    for (let i = 1; i <= riviMaara; i++) {
+        let lottoRivi = ArvoRivi(rivienPituus, alinLuku, ylinLuku);
+        arvotutRivitStr += lottoRivi.toString() + "\r\n";
+        // Luo taulukko arvotulle riville jos käyttäjä on valinnut taulukot näytettäväksi
+        if (document.getElementById("naytaRivit").checked) LuoTaulukko(lottoRivi, alinLuku, ylinLuku);
+
+        // Päivitetään edistymispalkki joka 10. rivillä tai viimeisellä rivillä
+        if (i % 30 === 0 || i === riviMaara) {
+            //Käytetään setTimeout:ia, jotta käyttöliittymä päivittyy
+            await PaivitaEdistymisPalkki(Math.floor(i / riviMaara * 100), 0.1);
         }
     }
-    // Aloitetaan rivien arvonta
-    suoritaRivi();
+    
+    if (tallennaTiedosto) {
+        tallennaRivit(arvotutRivitStr);
+    }
 }
 
 // 0-100 väliltä edistyminen, päivittää käyttöliittymän
-const PaivitaEdistymisPalkki = (leveys) => {
+const PaivitaEdistymisPalkki = (leveys, odotaMs = 0) => {
     const elem = document.getElementById("myBar");
     elem.style.width = leveys + "%";
     elem.innerHTML = leveys + "%";
+    if (odotaMs === 0) return;
+    return new Promise(resolve => setTimeout(resolve, odotaMs));
     //console.log("Leveys", leveys);
 }
 
