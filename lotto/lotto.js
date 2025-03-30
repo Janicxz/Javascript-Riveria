@@ -1,25 +1,64 @@
 const TarkistaRivit = async () => {
+    // Haetaan .txt tiedostosta arvotut lottorivit
     let rivit = await aukaiseTiedosto();
+    // Kuinka monta oikein yhteensä 0-7 väliltä
+    let osumat = [0, 0, 0, 0, 0, 0, 0, 0];
+    // Haetaan käyttäjän antama rivi
     const kayttajanRivi =  haeKayttajanRivi()
+    // Paloitellaan se valmiiksi pilkulla
+    const kayttajaRiviOsat = kayttajanRivi.split(',');
     // Tarkistetaan syötteet
     if (!rivit) {
         alert("Valitse ensin tiedosto!");
         return;
     }
+    // Tarkistetaan ettei syötteet ole tyhjiä
     if (kayttajanRivi === "") {
         alert("Syötä tarkistettava lottorivi");
         return;
     }
+    // Nollataan edistymispalkki
+    PaivitaEdistymisPalkki(0);
+    //  Käännetään rivi merkkijono taulukoksi
     rivit = rivit.split("\r\n");
+    // Muuttuja edistymisen seuraamiselle
+    let riviNum = 0;
     rivit.forEach((rivi) => {
-        console.log("rivi:",rivi);
-    });
-}
+        // Jos tyhjä rivi ei tehdä mitään
+        if (rivi === "") return;
 
+        // Kuinka monta numeroa oikein tälle riville
+        let osumatKpl = 0;
+        kayttajaRiviOsat.forEach((numero) => {
+            // Tarkistetaan montako numeroa oikein
+            const riviOsat = rivi.split(',');
+            riviOsat.forEach((riviNumero) => {
+                if (numero === riviNumero) osumatKpl++;
+            })
+        });
+        // debug
+        console.log("rivi:",rivi);
+        console.log(`Oikein ${osumatKpl} kpl`);
+        osumat[osumatKpl]++;
+        riviNum++;
+        // Pääivitetään edistymispalkki
+        PaivitaEdistymisPalkki (Math.ceil(riviNum / rivit.length * 100));
+        //console.log("edistyminen", (Math.ceil(riviNum / rivit.length * 100)))
+    });
+    // Näytetään käyttäjälle tilastot
+    let tulos = "";
+    for (let i = 0; i < osumat.length; i++) {
+        tulos += `${i} oikein <b>${osumat[i]}</b> kpl <br>`;
+        console.log(`${i} oikein ${osumat[i]} kpl`)
+    }
+    document.getElementById("tarkistaTulos").innerHTML = tulos;
+    // tarkistaTulos
+}
+// Hakee käyttäjän antaman lottorivin ja palauttaa sen merkkijonon
 const haeKayttajanRivi = () => {
     return document.getElementById("tarkistettavaRivi").value;
 }
-
+// Aukaisee käyttäjän valitseman tiedoston ja palauttaa sen sisältämän merkkijonon
 const aukaiseTiedosto = async () => {
     const tiedosto = document.getElementById("tarkistaRivitCheck").files[0];
     if (!tiedosto) {
@@ -28,7 +67,7 @@ const aukaiseTiedosto = async () => {
     const teksti = await tiedosto.text();
     return teksti;
 }
-
+// Tallentaa arvotut rivit lottorivit.txt tiedostoon
 const tallennaRivit = (rivit) => {
     var blob = new Blob([rivit], {type: "text/plain;charset=utf-8"});
     saveAs(blob, "LottoRivit.txt");
