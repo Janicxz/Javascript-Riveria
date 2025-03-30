@@ -1,4 +1,5 @@
 const TarkistaRivit = async () => {
+    const aikaAlku = performance.now();
     // Haetaan .txt tiedostosta arvotut lottorivit
     let rivit = await aukaiseTiedosto();
     // Kuinka monta oikein yhteensä 0-7 väliltä
@@ -43,12 +44,14 @@ const TarkistaRivit = async () => {
         }
     }
     PaivitaEdistymisPalkki (100);
+    const aikaLoppu = performance.now();
     // Näytetään käyttäjälle tilastot
     let tulos = "";
     for (let i = 0; i < osumat.length; i++) {
         tulos += `${i} oikein <b>${osumat[i]}</b> kpl <br>`;
         console.log(`${i} oikein ${osumat[i]} kpl`)
     }
+    tulos += `<br> Aikaa tarkistukseen kului: ${Math.floor((aikaLoppu - aikaAlku) * 100)/100} ms`;
     document.getElementById("tarkistaTulos").innerHTML = tulos;
     // tarkistaTulos
     }
