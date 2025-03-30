@@ -1,8 +1,25 @@
-// Arpoo lottorivin ja luo sille taulukon
+const TarkistaRivit = async () => {
+    const rivit = await aukaiseTiedosto();
+}
+
+const aukaiseTiedosto = async () => {
+    const tiedosto = document.getElementById("tarkistaRivitCheck").files[0];
+
+    if (!tiedosto) {
+        alert("Valitse tiedosto!");
+        return;
+    }
+    const teksti = await tiedosto.text();
+    return teksti;
+}
+
+// Arpoo lottorivit annetuilla arvoilla ja tallentaa ne .txt tiedostoon jos käyttäjä valitsi tallennuksen
 const ArvoRivit = (rivienPituus, alinLuku, ylinLuku) => {
+    // Nollataan edistyminen
     PaivitaEdistymisPalkki(0);
     const riviMaara = parseInt(document.getElementById("lottoRiviMaara").value);
     const tallennaTiedosto = document.getElementById("tallennaRivit").checked;
+    // Tarkistetaan onko numeroita
     if (isNaN(riviMaara)) {
         console.log("Virhe! Rivien määrä ei ole numero!");
         window.alert("Virhe! Rivien määrä ei ole numero!");
@@ -13,24 +30,30 @@ const ArvoRivit = (rivienPituus, alinLuku, ylinLuku) => {
     let arvotutRivitStr = "";
     const suoritaRivi = () => {
         if(i <= riviMaara) {
+            // Arpoo uuden lottorivin
             let lottoRivi= ArvoRivi(rivienPituus, alinLuku,ylinLuku);
             arvotutRivitStr += lottoRivi.toString() + "\n";
+            // Luo uuden taulukon lottoriville
             LuoTaulukko(lottoRivi, alinLuku, ylinLuku);
-            
+            // Päivitetään edistyminen käyttöliittymään
             PaivitaEdistymisPalkki(Math.floor(i / riviMaara * 100));
             i++;
+            // Silmukka toteutettu setTimeout avulla ettei käyttöliittymä hyydy suorituksen ajaksi
+            // Suoraan toteutettuna progressBar ei päivittyisi
             setTimeout(suoritaRivi, 0);
         } else {
+            // Tallennetaan tulokset .txt tiedostona
             if(tallennaTiedosto) {
                 var blob = new Blob([arvotutRivitStr], {type: "text/plain;charset=utf-8"});
                 saveAs(blob, "LottoRivit.txt");
             }
         }
     }
+    // Aloitetaan rivien arvonta
     suoritaRivi();
 }
 
-
+// 0-100 väliltä edistyminen, päivittää käyttöliittymän
 const PaivitaEdistymisPalkki = (leveys) => {
     const elem = document.getElementById("myBar");
     elem.style.width = leveys + "%";
@@ -38,15 +61,16 @@ const PaivitaEdistymisPalkki = (leveys) => {
     //console.log("Leveys", leveys);
 }
 
+// Arpoo yhden lottorivin annetuilla arvoilla ja palauttaa sen  taulukkona
 const ArvoRivi = (rivienMaara, alinLuku, ylinLuku) => {
     // Arvottava rivi
     let lottoRivi = [];
-
+    // Tarkistetaan luku virheiden varalta
     if (ylinLuku - alinLuku < rivienMaara) {
         console.log("Virhe! Arvottavien rivien määrä on suurempi kuin arvottavien lukujen väli");
         return;
     }
-
+    // Arvotaan lottorivi ja tarkistetaan ettei riville tule samoja numeroita
     for (let i = 0; i < rivienMaara; i++) {
         var luku = Math.floor(Math.random() * ylinLuku) + 1;
         // Jos arvottu luku löytyy riviltä, arvotaan se uudelleen
@@ -74,7 +98,7 @@ let taulukkoMaara = 0;
 let soluMaara = 0;
 // Luo uuden taulukon johon lisätään kaikki arvottavat numerot sekä voittorivin korostus
 const LuoTaulukko = (voittoRivit, alinLuku, ylinLuku) => {
-    //
+    // Luodaan taulukon yläpuolelle seloste rivistä
     let rivitStr = "Voittava rivi on: <b>";
     for (let i = 0; i < voittoRivit.length; i++) {
         if (i === voittoRivit.length-1) {
@@ -92,6 +116,7 @@ const LuoTaulukko = (voittoRivit, alinLuku, ylinLuku) => {
     taulukko.className = "lottoTaulukko";
     taulukko.id = "lottoTaulukko" + taulukkoMaara;
     taulukkoMaara++;
+    // Haetaan lottoTaulukot div mihin rivit lisätään
     const taulukkoDiv = document.getElementById("lottoTaulukot")
     if (!taulukkoDiv) {
         console.log("Virhe! Lottotaulukot elementtiä ei löytynyt.");

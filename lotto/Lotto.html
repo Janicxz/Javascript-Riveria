@@ -13,7 +13,7 @@
         <table>
             <tbody>
                 <tr>
-                    <td><input type="button" value="Suorita lottoarvonta" onclick="ArvoRivit(7,1,39)"></td>
+                    <td><input type="button" value="Suorita lottoarvonta" onclick="ArvoRivit(7,1,39);"></td>
                     <td>&nbsp;</td>
                 </tr>
                 <tr>
@@ -25,16 +25,28 @@
                     <td><input type="text" id="lottoRiviMaara" value="1"></td>
                 </tr>
                 <tr>
+                    <td><label for="tallennaRivit">Tallenna arvotut rivit:</label><input type="checkbox" id="tallennaRivit"></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><label for="tarkistaRivitCheck">Valitse tarkistettavat rivit:</label></td>
+                    <td><input type="file" id="tarkistaRivitCheck"></td>
+                </tr>
+                <tr>
+                    <td><label for="tarkistettavaRivi">Anna lottorivisi:</label></td>
+                    <td><input type="text" id="lottoRivi"></td>
+                </tr>
+                <tr>
+                    <td><input id="tarkistaRivitNappi" type="button" value="Tarkista rivit" onclick="TarkistaRivit();"></td>
+                    <td></td>
+                </tr>
+                <tr>
                     <td>
                         <div id="myProgress">
                             <div id="myBar">
                         </div>
                       </div>
                     </td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td><label for="tallennaRivit">Tallenna .txt:</label><input type="checkbox" id="tallennaRivit"></td>
                     <td></td>
                 </tr>
             </tbody>
