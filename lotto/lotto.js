@@ -1,12 +1,16 @@
+// Tarkistaa käyttäjän valitsemasta tiedostosta kuinka monta veikattu oikein
 const TarkistaTiedostonRivit = async () => {
     let rivit = await aukaiseTiedosto();
+    if (!rivit) {
+        alert("Valitse ensin tiedosto!");
+        return;
+    }
     TarkistaRivit(rivit);
 }
-
+// Tarkistaa kuinka monta oikein annetuilla riveillä, lukee käyttäjän käyttäjän valitseman rivin käyttöliittymästä
 const TarkistaRivit = async (rivit) => {
     const aikaAlku = performance.now();
     // Haetaan .txt tiedostosta arvotut lottorivit
-    //let rivit = await aukaiseTiedosto();
     // Kuinka monta oikein yhteensä 0-7 väliltä
     let osumat = [0, 0, 0, 0, 0, 0, 0, 0];
     // Haetaan käyttäjän antama rivi
@@ -15,7 +19,7 @@ const TarkistaRivit = async (rivit) => {
     const kayttajaRiviOsat = kayttajanRivi.split(',');
     // Tarkistetaan syötteet
     if (!rivit) {
-        alert("Valitse ensin tiedosto!");
+        alert("Ei tarkistettavia rivejä!");
         return;
     }
     // Tarkistetaan ettei syötteet ole tyhjiä
@@ -52,11 +56,24 @@ const TarkistaRivit = async (rivit) => {
     const aikaLoppu = performance.now();
     // Näytetään käyttäjälle tilastot
     let tulos = "";
+    let tulosSaldo = 0;
+    // Yksi lottorivi maksaa euron
+    const RIVIHINTA = 1;
+    // Voittoluokat väliltä 0-7 oikein
+    const VOITTOLUOKAT = [0, 0, 0, 0, 10, 50, 2000, 1000000]
+    // Miinustetaan tuloksesta rivien hinta
+    // Rivin pituudesta -1 koska tyhjä rivi lopussa
+    tulosSaldo -= rivit.length-1 * RIVIHINTA;
+
     for (let i = 0; i < osumat.length; i++) {
         tulos += `${i} oikein <b>${osumat[i]}</b> kpl <br>`;
         console.log(`${i} oikein ${osumat[i]} kpl`)
+        // Lisätään voitot
+        tulosSaldo += osumat[i] * VOITTOLUOKAT[i];
     }
     tulos += `<br> Aikaa tarkistukseen kului: ${Math.floor((aikaLoppu - aikaAlku) * 100)/100} ms`;
+    tulos += "<br>";
+    tulos += tulosSaldo > 0 ? `<b>Jäit voitolle ${tulosSaldo} €</b>!` : `<b>Jäit tappiolle ${tulosSaldo * -1} €</b>!`;
     document.getElementById("tarkistaTulos").innerHTML = tulos;
     // tarkistaTulos
     }
@@ -86,6 +103,9 @@ const tallennaRivit = (rivit) => {
 const ArvoRivit = async(rivienPituus, alinLuku, ylinLuku) => {
     // Nollataan edistyminen
     PaivitaEdistymisPalkki(0);
+    // Tyhjennetään aikaisemmin arvotut taulukot
+    document.getElementById("lottoTaulukot").innerHTML = "";
+
     const riviMaara = parseInt(document.getElementById("lottoRiviMaara").value);
     const tallennaTiedosto = document.getElementById("tallennaRivit").checked;
     const tarkistaRivit = document.getElementById("lottoTarkistaArvotut").checked;
@@ -95,10 +115,16 @@ const ArvoRivit = async(rivienPituus, alinLuku, ylinLuku) => {
         window.alert("Virhe! Rivien määrä ei ole numero!");
         return;
     }
-    // Arvottavat rivit
+    if (riviMaara <= 0) {
+        alert("Ei arvottavia rivejä.");
+        return;
+    }
+    // Muuttuja arvotuille riveille
     let arvotutRivitStr = "";
 
+    // Arvotaan silmukassa käyttäjän valitsema määrä lottorivejä
     for (let i = 1; i <= riviMaara; i++) {
+        // Arvotaan uusi lottorivi
         let lottoRivi = ArvoRivi(rivienPituus, alinLuku, ylinLuku);
         arvotutRivitStr += lottoRivi.toString() + "\r\n";
         // Luo taulukko arvotulle riville jos käyttäjä on valinnut taulukot näytettäväksi
@@ -110,12 +136,13 @@ const ArvoRivit = async(rivienPituus, alinLuku, ylinLuku) => {
             await PaivitaEdistymisPalkki(Math.floor(i / riviMaara * 100), 0.1);
         }
     }
-    
+    // Tallennetaan rivit .txt/.csv tiedostoon jos tallennus valittu
     if (tallennaTiedosto) {
         tallennaRivit(arvotutRivitStr);
     }
+    // Tarkistetaan lopuksi kuinka monta osumaa käyttäjä sai jos tarkistus valittu
     if(tarkistaRivit) {
-
+        TarkistaRivit(arvotutRivitStr);
     }
 
 }
@@ -167,8 +194,8 @@ let taulukkoMaara = 0;
 let soluMaara = 0;
 // Luo uuden taulukon johon lisätään kaikki arvottavat numerot sekä voittorivin korostus
 const LuoTaulukko = (voittoRivit, alinLuku, ylinLuku) => {
-    // Luodaan taulukon yläpuolelle seloste rivistä
-    let rivitStr = "Voittava rivi on: <b>";
+    // Näytetään taulukon yläpuolella rivin numerot
+    let rivitStr = "Arvottu rivi on: <b>";
     for (let i = 0; i < voittoRivit.length; i++) {
         if (i === voittoRivit.length-1) {
             rivitStr += voittoRivit[i];
