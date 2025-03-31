@@ -14,7 +14,7 @@
             <tbody>
                 <tr>
                     <td><input type="button" value="Suorita lottoarvonta" onclick="ArvoRivit(7,1,39);"></td>
-                    <td>&nbsp;</td>
+                    <td></td>
                 </tr>
                 <tr>
                     <td><label for="lottoVari">Valitse korostusväri:</label></td>
@@ -25,12 +25,12 @@
                     <td><input type="text" id="lottoRiviMaara" value="1"></td>
                 </tr>
                 <tr>
-                    <td><label for="tallennaRivit">Tallenna arvotut rivit:</label><input type="checkbox" id="tallennaRivit"></td>
-                    <td><label for="naytaRivit">Näytä arvotut taulukot (HUOM! hidas):</label><input type="checkbox" id="naytaRivit" checked></td>
+                    <td><input type="checkbox" id="tallennaRivit"><label for="tallennaRivit">Tallenna arvotut rivit:</label></td>
+                    <td><input type="checkbox" id="naytaRivit" checked><label for="naytaRivit">Näytä arvotut taulukot (HUOM! hidas):</label></td>
                 </tr>
                 <tr>
-                    <td><label for="tallennaRivitCsv">Tallenna .csv muodossa:</label><input type="checkbox" id="tallennaRivitCsv"></td>
-                    <td></td>
+                    <td><input type="checkbox" id="tallennaRivitCsv"><label for="tallennaRivitCsv">Tallenna .csv muodossa:</label></td>
+                    <td><input type="checkbox" id="lottoTarkistaArvotut" checked><label for="lottoTarkistaArvotut">Tarkista arvotut rivit</label></td>
                 </tr>
                 <tr>
                     <td><label for="tarkistaRivitCheck">Valitse tarkistettavat rivit:</label></td>
@@ -38,10 +38,10 @@
                 </tr>
                 <tr>
                     <td><label for="tarkistettavaRivi">Anna lottorivisi väliltä 1-39:</label></td>
-                    <td><input type="text" id="tarkistettavaRivi"></td>
+                    <td><input type="text" id="tarkistettavaRivi" value="1,2,3,4,5,6,7"></td>
                 </tr>
                 <tr>
-                    <td><input id="tarkistaRivitNappi" type="button" value="Tarkista rivit" onclick="TarkistaRivit();"></td>
+                    <td><input id="tarkistaRivitNappi" type="button" value="Tarkista tiedoston rivit" onclick="TarkistaTiedostonRivit();"></td>
                     <td></td>
                 </tr>
                 <tr>

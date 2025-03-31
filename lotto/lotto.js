@@ -1,7 +1,12 @@
-const TarkistaRivit = async () => {
+const TarkistaTiedostonRivit = async () => {
+    let rivit = await aukaiseTiedosto();
+    TarkistaRivit(rivit);
+}
+
+const TarkistaRivit = async (rivit) => {
     const aikaAlku = performance.now();
     // Haetaan .txt tiedostosta arvotut lottorivit
-    let rivit = await aukaiseTiedosto();
+    //let rivit = await aukaiseTiedosto();
     // Kuinka monta oikein yhteensä 0-7 väliltä
     let osumat = [0, 0, 0, 0, 0, 0, 0, 0];
     // Haetaan käyttäjän antama rivi
@@ -83,6 +88,7 @@ const ArvoRivit = async(rivienPituus, alinLuku, ylinLuku) => {
     PaivitaEdistymisPalkki(0);
     const riviMaara = parseInt(document.getElementById("lottoRiviMaara").value);
     const tallennaTiedosto = document.getElementById("tallennaRivit").checked;
+    const tarkistaRivit = document.getElementById("lottoTarkistaArvotut").checked;
     // Tarkistetaan onko numeroita
     if (isNaN(riviMaara)) {
         console.log("Virhe! Rivien määrä ei ole numero!");
@@ -108,6 +114,10 @@ const ArvoRivit = async(rivienPituus, alinLuku, ylinLuku) => {
     if (tallennaTiedosto) {
         tallennaRivit(arvotutRivitStr);
     }
+    if(tarkistaRivit) {
+
+    }
+
 }
 
 // 0-100 väliltä edistyminen, päivittää käyttöliittymän
